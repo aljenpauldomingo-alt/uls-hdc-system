@@ -11,8 +11,19 @@ class NotificationController extends Controller
 {
     public function index(Request $request): View
     {
+        $filter = $request->query('filter', 'all');
+        
+        $query = $request->user()->notifications();
+
+        if ($filter === 'unread') {
+            $query->whereNull('read_at');
+        } elseif ($filter === 'read') {
+            $query->whereNotNull('read_at');
+        }
+
         return view('staff.notifications', [
-            'notifications' => $request->user()->notifications()->paginate(20),
+            'notifications' => $query->paginate(20)->withQueryString(),
+            'filter' => $filter,
         ]);
     }
 

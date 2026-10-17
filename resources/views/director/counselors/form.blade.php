@@ -22,18 +22,18 @@
                 class="glass-panel sm:rounded-lg p-4 sm:p-6 space-y-6">
 
                 <div class="grid gap-6 sm:grid-cols-3">
-                    <x-form.text name="last_name" label="Last name" :value="$counselor->last_name" required autocomplete="off" />
-                    <x-form.text name="first_name" label="First name" :value="$counselor->first_name" required autocomplete="off" />
-                    <x-form.text name="middle_name" label="Middle name" :value="$counselor->middle_name" autocomplete="off" />
+                    <x-form.text name="last_name" label="Last name" :value="$counselor->last_name" required maxlength="100" pattern="[\p{L}\p{M} .'\-]+" title="Letters, spaces, periods, apostrophes and hyphens only." autocomplete="off" />
+                    <x-form.text name="first_name" label="First name" :value="$counselor->first_name" required maxlength="100" pattern="[\p{L}\p{M} .'\-]+" title="Letters, spaces, periods, apostrophes and hyphens only." autocomplete="off" />
+                    <x-form.text name="middle_name" label="Middle name" :value="$counselor->middle_name" maxlength="100" pattern="[\p{L}\p{M} .'\-]+" title="Letters, spaces, periods, apostrophes and hyphens only." autocomplete="off" />
                 </div>
 
-                <x-form.text name="email" label="Email" type="email" :value="$counselor->email" required autocomplete="off" />
+                <x-form.text name="email" label="Email" type="email" :value="$counselor->email" required maxlength="255" autocomplete="off" />
 
-                <x-form.text name="password" type="password" autocomplete="new-password" :required="! $editing"
+                <x-form.text name="password" type="password" minlength="8" maxlength="255" autocomplete="new-password" :required="! $editing"
                     :label="$editing ? 'Reset password (optional)' : 'Temporary password'"
                     :hint="$editing
                         ? 'Leave blank to keep the current password. If you set one, they must change it on next login.'
-                        : 'Give this to the counselor. They must change it on first login. At least 8 characters.'" />
+                        : 'Give this to the counselor. They must change it on first login. At least 8 characters, with upper and lower case letters and a number.'" />
 
                 <x-form.checkboxes name="colleges" label="Assigned colleges" required :columns="2"
                     :options="$colleges->mapWithKeys(fn ($college) => [$college->id => $college->code.' – '.$college->name])->all()"

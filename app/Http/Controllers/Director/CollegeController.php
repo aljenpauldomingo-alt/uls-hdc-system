@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Director;
 use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Director\CollegeRequest;
+use App\Models\AccessLog;
 use App\Models\College;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -38,6 +39,8 @@ class CollegeController extends Controller
     {
         $college = College::create($request->validated());
 
+        AccessLog::logAction($request->user()->id, AccessLog::ACTION_MANAGE, "Created college: {$college->code}", $request->ip());
+
         return redirect()
             ->route('director.colleges.edit', $college)
             ->with('status', "College {$college->code} created. You can add its programs below.");
@@ -57,6 +60,8 @@ class CollegeController extends Controller
     {
         $college->update($request->validated());
 
+        AccessLog::logAction($request->user()->id, AccessLog::ACTION_MANAGE, "Updated college: {$college->code}", $request->ip());
+
         return redirect()
             ->route('director.colleges.edit', $college)
             ->with('status', "Saved college {$college->code}.");
@@ -70,6 +75,8 @@ class CollegeController extends Controller
 
         $code = $college->code;
         $college->delete();
+
+        AccessLog::logAction(request()->user()->id, AccessLog::ACTION_MANAGE, "Deleted college: {$code}", request()->ip());
 
         return redirect()
             ->route('director.colleges.index')

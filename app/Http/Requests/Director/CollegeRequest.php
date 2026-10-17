@@ -28,7 +28,7 @@ class CollegeRequest extends FormRequest
     {
         return [
             'code' => ['required', 'string', 'max:20', 'regex:/^[A-Za-z0-9-]+$/', Rule::unique(College::class)->ignore($this->route('college'))],
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255', Rule::unique(College::class)->ignore($this->route('college'))],
         ];
     }
 
@@ -41,6 +41,7 @@ class CollegeRequest extends FormRequest
     {
         return [
             'code.unique' => 'Another college already uses this code.',
+            'name.unique' => 'Another college already uses this name.',
             'code.regex' => 'Use letters, numbers and dashes only (e.g. CIT).',
         ];
     }

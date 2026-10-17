@@ -1,6 +1,10 @@
 @if (session('status'))
-    <div class="rounded-md bg-green-50 dark:bg-green-500/10 px-4 py-3 text-sm text-green-800 dark:text-green-300" role="status">{{ session('status') }}</div>
+    <div class="rounded-lg border border-green-500/50 bg-green-600 px-4 py-3 text-sm font-medium text-white shadow-lg backdrop-blur-sm dark:bg-green-500/80" role="status">
+        {{ session('status') }}
+    </div>
 @endif
 @if (session('error'))
-    <div class="rounded-md bg-red-50 dark:bg-red-500/10 px-4 py-3 text-sm text-red-800 dark:text-red-300" role="alert">{{ session('error') }}</div>
+    <div class="rounded-lg border border-red-500/50 bg-red-600 px-4 py-3 text-sm font-medium text-white shadow-lg backdrop-blur-sm dark:bg-red-500/80" role="alert">
+        {{ session('error') }}
+    </div>
 @endif

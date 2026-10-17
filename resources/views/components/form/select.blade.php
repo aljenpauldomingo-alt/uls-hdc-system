@@ -3,6 +3,7 @@
 @php
     $id = str_replace('.', '_', $name);
     $selected = (string) old($name, $value);
+    $extra = $required ? ['required' => true] : [];
 @endphp
 
 <div {{ $attributes->only(['class', 'x-show', 'x-cloak']) }}>
@@ -11,8 +12,8 @@
     </x-input-label>
     <select id="{{ $id }}" name="{{ \App\Support\FormName::html($name) }}"
         class="mt-1 block w-full glass-input focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm dark:focus:border-indigo-400 dark:focus:ring-indigo-400"
-        {{ $attributes->except(['class', 'x-show', 'x-cloak']) }}>
-        <option value="">{{ $placeholder }}</option>
+        {{ $attributes->except(['class', 'x-show', 'x-cloak'])->merge($extra) }}>
+        <option value="" @selected($selected === '')>{{ $placeholder }}</option>
         @if ($slot->isNotEmpty())
             {{ $slot }}
         @else

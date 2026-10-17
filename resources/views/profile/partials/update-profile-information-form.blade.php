@@ -19,25 +19,25 @@
 
         <div>
             <x-input-label for="last_name" :value="__('Last Name')" />
-            <x-text-input id="last_name" name="last_name" type="text" class="mt-1 block w-full" :value="old('last_name', $user->last_name)" required autofocus autocomplete="family-name" />
+            <x-text-input id="last_name" name="last_name" type="text" maxlength="100" pattern="[\p{L}\p{M} .'\-]+" title="Letters, spaces, periods, apostrophes and hyphens only." class="mt-1 block w-full" :value="old('last_name', $user->last_name)" required autofocus autocomplete="family-name" />
             <x-input-error class="mt-2" :messages="$errors->get('last_name')" />
         </div>
 
         <div>
             <x-input-label for="first_name" :value="__('First Name')" />
-            <x-text-input id="first_name" name="first_name" type="text" class="mt-1 block w-full" :value="old('first_name', $user->first_name)" required autocomplete="given-name" />
+            <x-text-input id="first_name" name="first_name" type="text" maxlength="100" pattern="[\p{L}\p{M} .'\-]+" title="Letters, spaces, periods, apostrophes and hyphens only." class="mt-1 block w-full" :value="old('first_name', $user->first_name)" required autocomplete="given-name" />
             <x-input-error class="mt-2" :messages="$errors->get('first_name')" />
         </div>
 
         <div>
             <x-input-label for="middle_name" :value="__('Middle Name (optional)')" />
-            <x-text-input id="middle_name" name="middle_name" type="text" class="mt-1 block w-full" :value="old('middle_name', $user->middle_name)" autocomplete="additional-name" />
+            <x-text-input id="middle_name" name="middle_name" type="text" maxlength="100" pattern="[\p{L}\p{M} .'\-]+" title="Letters, spaces, periods, apostrophes and hyphens only." class="mt-1 block w-full" :value="old('middle_name', $user->middle_name)" autocomplete="additional-name" />
             <x-input-error class="mt-2" :messages="$errors->get('middle_name')" />
         </div>
 
         <div>
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
+            <x-text-input id="email" name="email" type="email" maxlength="255" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())

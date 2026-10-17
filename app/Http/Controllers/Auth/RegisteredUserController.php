@@ -45,13 +45,13 @@ class RegisteredUserController extends Controller
             'last_name' => ['required', 'string', 'max:100'],
             'first_name' => ['required', 'string', 'max:100'],
             'middle_name' => ['nullable', 'string', 'max:100'],
-            'student_number' => ['required', 'string', 'max:30', 'regex:/^[A-Za-z0-9-]+$/', 'unique:'.User::class],
+            'username' => ['required', 'string', 'max:30', 'regex:/^[A-Za-z0-9-]+$/', 'unique:'.User::class],
             'program_id' => ['required', 'integer', 'exists:'.Program::class.',id'],
             'year_level' => ['required', 'integer', 'between:1,5'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ], [
-            'student_number.regex' => 'The student number may only contain letters, numbers and dashes.',
+            'username.regex' => 'The username may only contain letters, numbers and dashes.',
         ], [
             'program_id' => 'program',
         ]);
@@ -60,7 +60,7 @@ class RegisteredUserController extends Controller
             'last_name' => $validated['last_name'],
             'first_name' => $validated['first_name'],
             'middle_name' => $validated['middle_name'] ?? null,
-            'student_number' => $validated['student_number'],
+            'username' => $validated['username'],
             'program_id' => $validated['program_id'],
             'year_level' => $validated['year_level'],
             'email' => $validated['email'],

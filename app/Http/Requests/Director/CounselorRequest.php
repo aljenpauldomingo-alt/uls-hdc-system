@@ -29,9 +29,9 @@ class CounselorRequest extends FormRequest
         $counselor = $this->route('counselor');
 
         return [
-            'last_name' => ['required', 'string', 'max:100'],
-            'first_name' => ['required', 'string', 'max:100'],
-            'middle_name' => ['nullable', 'string', 'max:100'],
+            'last_name' => ['required', 'string', 'max:100', 'regex:/^[\p{L}\p{M} .\'-]+$/u'],
+            'first_name' => ['required', 'string', 'max:100', 'regex:/^[\p{L}\p{M} .\'-]+$/u'],
+            'middle_name' => ['nullable', 'string', 'max:100', 'regex:/^[\p{L}\p{M} .\'-]+$/u'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($counselor)],
             // Required when creating; optional on edit (filled = reset to a new temporary password).
             'password' => [$counselor ? 'nullable' : 'required', 'string', Password::defaults()],
@@ -49,6 +49,10 @@ class CounselorRequest extends FormRequest
     {
         return [
             'colleges.required' => 'Assign at least one college.',
+            'last_name.regex' => 'Use letters, spaces, periods, apostrophes and hyphens only.',
+            'first_name.regex' => 'Use letters, spaces, periods, apostrophes and hyphens only.',
+            'middle_name.regex' => 'Use letters, spaces, periods, apostrophes and hyphens only.',
+            'email.unique' => 'This email address is already in use.',
             'colleges.min' => 'Assign at least one college.',
         ];
     }

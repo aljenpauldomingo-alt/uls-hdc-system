@@ -31,6 +31,7 @@ class UserFactory extends Factory
             'last_name' => fake()->lastName(),
             'first_name' => fake()->firstName(),
             'middle_name' => fake()->lastName(),
+            'username' => fake()->unique()->userName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
@@ -56,7 +57,6 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'role' => Role::Student,
-            'student_number' => fake()->unique()->numerify('##-#####'),
             'program_id' => $program?->id ?? Program::factory(),
             'year_level' => fake()->numberBetween(1, 4),
         ]);

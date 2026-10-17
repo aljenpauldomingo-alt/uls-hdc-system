@@ -84,6 +84,16 @@ class SaveRecordStepRequest extends FormRequest
         return [
             'school_year.regex' => 'Enter the school year like 2026-2027.',
             'school_year.unique' => 'You already have a record for this school year and semester.',
+            'photo.required' => 'Please upload your 2x2 photo.',
+            'photo.image' => 'The photo must be an image.',
+            'photo.mimes' => 'The photo must be a JPG, PNG or WEBP file.',
+            'photo.max' => 'The photo must be 2 MB or smaller.',
+            'photo.uploaded' => 'The photo could not be uploaded. Make sure it is 2 MB or smaller.',
+            'last_name.regex' => 'Use letters, spaces, periods, apostrophes and hyphens only.',
+            'first_name.regex' => 'Use letters, spaces, periods, apostrophes and hyphens only.',
+            'middle_name.regex' => 'Use letters, spaces, periods, apostrophes and hyphens only.',
+            'contact_number.regex' => 'Enter a valid phone number (digits, +, -, spaces and parentheses, 7 to 20 characters).',
+            'emergency_contact_number.regex' => 'Enter a valid phone number (digits, +, -, spaces and parentheses, 7 to 20 characters).',
             'self_description.min' => 'Please check at least five.',
             'self_description.required' => 'Please check at least five.',
             'course_reasons.required' => 'Please check at least one reason.',
@@ -198,8 +208,10 @@ class SaveRecordStepRequest extends FormRequest
             ],
             'semester' => ['required', Rule::in(array_keys(Form5::SEMESTERS))],
             'student_type' => ['required', Rule::in(array_keys(Form5::STUDENT_TYPES))],
-            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-            'remove_photo' => ['nullable', 'boolean'],
+            'photo' => [
+                Rule::requiredIf(fn () => blank($this->record()?->photo_path)),
+                'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048',
+            ],
         ];
     }
 
@@ -209,16 +221,16 @@ class SaveRecordStepRequest extends FormRequest
     private function personalRules(): array
     {
         return [
-            'last_name' => ['required', 'string', 'max:100'],
-            'first_name' => ['required', 'string', 'max:100'],
-            'middle_name' => ['nullable', 'string', 'max:100'],
+            'last_name' => ['required', 'string', 'max:100', 'regex:/^[\p{L}\p{M} .\'-]+$/u'],
+            'first_name' => ['required', 'string', 'max:100', 'regex:/^[\p{L}\p{M} .\'-]+$/u'],
+            'middle_name' => ['nullable', 'string', 'max:100', 'regex:/^[\p{L}\p{M} .\'-]+$/u'],
             'program_id' => ['required', 'integer', Rule::exists(Program::class, 'id')],
             'year_level' => ['required', 'integer', Rule::in(array_keys(Form5::YEAR_LEVELS))],
             'major' => ['nullable', 'string', 'max:255'],
             'home_address' => ['required', 'string', 'max:500'],
             'sex' => ['required', Rule::in(array_keys(Form5::SEXES))],
             'civil_status' => ['required', Rule::in(array_keys(Form5::CIVIL_STATUSES))],
-            'contact_number' => ['required', 'string', 'max:50'],
+            'contact_number' => ['required', 'string', 'regex:/^[0-9+()\- ]{7,20}$/'],
             'email' => ['required', 'email', 'max:255'],
             'birth_date' => ['required', 'date', 'before:today', 'after:1900-01-01'],
             'place_of_birth' => ['required', 'string', 'max:255'],
@@ -228,7 +240,7 @@ class SaveRecordStepRequest extends FormRequest
             'boarding_address' => ['nullable', 'string', 'max:500'],
             'emergency_contact_name' => ['required', 'string', 'max:255'],
             'emergency_contact_address' => ['required', 'string', 'max:500'],
-            'emergency_contact_number' => ['required', 'string', 'max:50'],
+            'emergency_contact_number' => ['required', 'string', 'regex:/^[0-9+()\- ]{7,20}$/'],
             'spouse_name' => ['nullable', 'required_if:civil_status,married', 'string', 'max:255'],
             'number_of_children' => ['nullable', 'integer', 'min:0', 'max:30'],
         ];
@@ -240,23 +252,23 @@ class SaveRecordStepRequest extends FormRequest
     private function familyRules(): array
     {
         $rules = [
-            'parents_status' => ['nullable', 'array'],
+            'parents_status' => ['required', 'array', 'min:1'],
             'parents_status.*' => [Rule::in(array_keys(Form5::PARENTS_STATUSES))],
             'family_view' => ['nullable', 'string', 'max:5000'],
             'family_concern' => ['nullable', 'string', 'max:5000'],
-            'home_language' => ['nullable', 'string', 'max:255'],
+            'home_language' => ['required', 'string', 'max:255'],
             'siblings' => ['nullable', 'array', 'max:'.Form5::MAX_SIBLINGS],
             'siblings.*.name' => ['required', 'string', 'max:255'],
-            'siblings.*.sex' => ['nullable', Rule::in(array_keys(Form5::SEXES))],
-            'siblings.*.age' => ['nullable', 'integer', 'min:0', 'max:120'],
+            'siblings.*.sex' => ['required', Rule::in(array_keys(Form5::SEXES))],
+            'siblings.*.age' => ['required', 'integer', 'min:0', 'max:120'],
             'siblings.*.year_course_school' => ['nullable', 'string', 'max:255'],
             'siblings.*.occupation' => ['nullable', 'string', 'max:255'],
         ];
 
         foreach (array_keys(Form5::PARENT_RELATIONS) as $relation) {
             $rules += [
-                "parents.$relation.name" => ['nullable', 'string', 'max:255'],
-                "parents.$relation.age" => ['nullable', 'integer', 'min:10', 'max:120'],
+                "parents.$relation.name" => ['required', 'string', 'max:255'],
+                "parents.$relation.age" => ['required', 'integer', 'min:10', 'max:120'],
                 "parents.$relation.religion" => ['nullable', 'string', 'max:100'],
                 "parents.$relation.occupation" => ['nullable', 'string', 'max:255'],
                 "parents.$relation.monthly_income" => ['nullable', 'string', 'max:100'],

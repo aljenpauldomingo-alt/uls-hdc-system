@@ -15,7 +15,7 @@
                 <thead class="bg-gray-50 dark:bg-gray-900/40">
                     <tr>
                         <th scope="col" class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">{{ __('Student') }}</th>
-                        <th scope="col" class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">{{ __('Student no.') }}</th>
+                        <th scope="col" class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">{{ __('Username') }}</th>
                         <th scope="col" class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">{{ __('Program') }}</th>
                         <th scope="col" class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">{{ __('College') }}</th>
                         <th scope="col" class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">{{ __('Year') }}</th>
@@ -39,7 +39,7 @@
                                     <span class="font-medium">{{ $student->last_name }}, {{ $student->first_name }} {{ $student->middle_name }}</span>
                                 @endif
                             </td>
-                            <td class="px-4 py-3 text-gray-700 dark:text-gray-300 whitespace-nowrap">{{ $student->student_number }}</td>
+                            <td class="px-4 py-3 text-gray-700 dark:text-gray-300 whitespace-nowrap">{{ $student->username }}</td>
                             <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $student->program?->code }}</td>
                             <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $student->program?->college?->code }}</td>
                             <td class="px-4 py-3 text-gray-700 dark:text-gray-300 whitespace-nowrap">{{ Form5::YEAR_LEVELS[$student->year_level] ?? '—' }}</td>

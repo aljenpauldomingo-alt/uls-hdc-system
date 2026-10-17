@@ -9,7 +9,10 @@ use App\Models\CumulativeRecord;
 use App\Models\Program;
 use App\Models\User;
 use App\Notifications\RecordSubmitted;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Notifications\Events\BroadcastNotificationCreated;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
@@ -227,6 +230,40 @@ class StaffRecordsTest extends TestCase
                 && $data['program'] === 'BSIT'
                 && ! str_contains(json_encode($data), 'private family');
         });
+    }
+
+    public function test_submission_broadcasts_private_notifications_without_form_answers(): void
+    {
+        $record = CumulativeRecord::factory()
+            ->for($this->studentNotStarted, 'student')
+            ->completed()
+            ->create(['family_view' => 'Very private family answer']);
+
+        Event::fake([BroadcastNotificationCreated::class]);
+
+        $this->actingAs($this->studentNotStarted)
+            ->post(route('student.record.submit', $record), ['consent' => '1', 'consent_name' => 'Carlo Cruz'])
+            ->assertSessionHasNoErrors();
+
+        Event::assertDispatchedTimes(BroadcastNotificationCreated::class, 2);
+
+        foreach ([$this->director, $this->counselorA] as $recipient) {
+            Event::assertDispatched(
+                BroadcastNotificationCreated::class,
+                function (BroadcastNotificationCreated $event) use ($recipient): bool {
+                    $payload = $event->broadcastWith();
+                    $channel = $event->broadcastOn()[0];
+
+                    return $event->notifiable->is($recipient)
+                        && $channel instanceof PrivateChannel
+                        && $channel->name === "private-App.Models.User.{$recipient->id}"
+                        && $payload['message'] === 'Carlo Cruz (BSIT) submitted their Student Cumulative Record.'
+                        && ! str_contains(json_encode($payload), 'Very private family answer');
+                },
+            );
+        }
+
+        $this->assertDatabaseCount('notifications', 2);
     }
 
     public function test_updating_an_already_submitted_record_does_not_notify_again(): void

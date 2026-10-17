@@ -19,8 +19,8 @@
 
                 <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ __('College details') }}</h3>
                 <div class="grid gap-6 sm:grid-cols-3">
-                    <x-form.text name="code" label="Code" :value="$college->code" required placeholder="CIT" hint="Must be unique." />
-                    <x-form.text name="name" label="Name" :value="$college->name" required class="sm:col-span-2" placeholder="College of Information Technology" />
+                    <x-form.text name="code" label="Code" :value="$college->code" required maxlength="20" pattern="[A-Za-z0-9\-]+" title="Letters, numbers and dashes only." placeholder="CIT" hint="Must be unique." />
+                    <x-form.text name="name" label="Name" :value="$college->name" required maxlength="255" class="sm:col-span-2" placeholder="College of Information Technology" />
                 </div>
 
                 <div class="flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 dark:border-gray-700 pt-6">

@@ -69,5 +69,9 @@
         @if (array_filter($filters))
             <a href="{{ $action }}" class="text-sm text-gray-600 dark:text-gray-400 underline hover:text-gray-900 dark:hover:text-gray-100">{{ __('Clear') }}</a>
         @endif
+        <a href="{{ route('staff.records.export', request()->only(['college_id', 'program_id', 'year_level', 'status', 'sata', 'q'])) }}"
+           class="ms-auto inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700">
+            {{ __('Export CSV') }}
+        </a>
     </div>
 </form>

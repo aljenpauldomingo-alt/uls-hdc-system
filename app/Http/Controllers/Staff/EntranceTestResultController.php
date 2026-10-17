@@ -67,6 +67,8 @@ class EntranceTestResultController extends Controller
         $result->updated_by = $request->user()->id;
         $result->save();
 
+        AccessLog::logAction($request->user()->id, AccessLog::ACTION_CREATE, "Encoded SATA result for {$student->name}", $request->ip());
+
         if ($request->boolean('next')) {
             return $this->redirectToNextStudent($request, $student);
         }
@@ -105,6 +107,8 @@ class EntranceTestResultController extends Controller
         $result->fill($request->validated());
         $result->updated_by = $request->user()->id;
         $result->save();
+
+        AccessLog::logAction($request->user()->id, AccessLog::ACTION_UPDATE, 'Updated SATA result', $request->ip());
 
         return redirect()
             ->route('staff.sata.show', $result)

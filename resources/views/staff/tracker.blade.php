@@ -17,6 +17,7 @@
                 'statuses' => array_intersect_key($statusLabels, array_flip([StudentRecordQuery::NOT_STARTED, 'draft'])),
             ])
 
+            <div x-data="realtimeTable(window.location.href)" data-realtime-wrapper="staff-tracker-wrapper">
             <div class="glass-panel sm:rounded-lg p-4 flex flex-wrap items-center justify-between gap-3">
                 <p class="text-sm text-gray-700 dark:text-gray-300">
                     <span class="text-2xl font-semibold tabular-nums text-gray-900 dark:text-gray-100">{{ number_format($withoutSata) }}</span>

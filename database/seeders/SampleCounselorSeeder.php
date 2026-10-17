@@ -23,6 +23,7 @@ class SampleCounselorSeeder extends Seeder
         $counselor->fill([
             'first_name' => 'Sample',
             'last_name' => 'Counselor',
+            'username' => 'counselor',
             'password' => 'password',
         ]);
         $counselor->role = Role::Counselor;

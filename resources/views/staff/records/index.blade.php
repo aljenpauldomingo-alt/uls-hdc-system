@@ -15,7 +15,9 @@
                 'statuses' => \App\Support\StudentRecordQuery::STATUSES,
             ])
 
-            @include('staff.partials.student-table')
+            <div x-data="realtimeTable(window.location.href)" data-realtime-wrapper="staff-records-table">
+                @include('staff.partials.student-table')
+            </div>
         </div>
     </div>
 </x-app-layout>

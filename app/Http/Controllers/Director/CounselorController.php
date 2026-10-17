@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Director;
 use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Director\CounselorRequest;
+use App\Models\AccessLog;
 use App\Models\College;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -61,6 +62,8 @@ class CounselorController extends Controller
             return $counselor;
         });
 
+        AccessLog::logAction($request->user()->id, AccessLog::ACTION_MANAGE, "Created counselor account: {$counselor->name}", $request->ip());
+
         return redirect()
             ->route('director.counselors.index')
             ->with('status', "Counselor account for {$counselor->name} created. They must change the temporary password on first login.");
@@ -98,6 +101,8 @@ class CounselorController extends Controller
             $counselor->colleges()->sync($validated['colleges']);
         });
 
+        AccessLog::logAction($request->user()->id, AccessLog::ACTION_MANAGE, "Updated counselor account: {$counselor->name}", $request->ip());
+
         return redirect()
             ->route('director.counselors.index')
             ->with('status', filled($validated['password'] ?? null)
@@ -121,6 +126,8 @@ class CounselorController extends Controller
 
         $counselor->is_active = $active;
         $counselor->save();
+
+        AccessLog::logAction(request()->user()->id, AccessLog::ACTION_MANAGE, ($active ? 'Reactivated' : 'Deactivated')." counselor: {$counselor->name}", request()->ip());
 
         return redirect()
             ->route('director.counselors.index')

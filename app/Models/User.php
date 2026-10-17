@@ -21,7 +21,7 @@ use Illuminate\Support\Collection;
  * `role`, `is_active` and `must_change_password` are intentionally NOT fillable: they are only
  * ever set explicitly in code (registration hardcodes Student; the director's screens set staff accounts).
  */
-#[Fillable(['name', 'last_name', 'first_name', 'middle_name', 'email', 'password', 'student_number', 'program_id', 'year_level'])]
+#[Fillable(['name', 'username', 'last_name', 'first_name', 'middle_name', 'email', 'password', 'student_number', 'program_id', 'year_level'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {

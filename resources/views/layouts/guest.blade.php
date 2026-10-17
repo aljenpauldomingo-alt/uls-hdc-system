@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" style="font-size: 15px;">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,9 +16,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased bg-transparent dark:text-gray-100">
-        @include('layouts.partials.theme-background')
-
+    <body class="font-sans text-gray-900 antialiased dark:text-gray-100" style="background-image: url('{{ asset('images/login-page.webp') }}'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; min-height: 100vh;">
         <div class="absolute right-4 top-4 z-10">
             <x-theme-toggle />
         </div>

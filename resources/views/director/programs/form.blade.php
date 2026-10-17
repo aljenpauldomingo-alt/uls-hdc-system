@@ -26,12 +26,12 @@
                 <div class="grid gap-6 sm:grid-cols-3">
                     <div>
                         <x-input-label for="code">{{ __('Code') }} <span class="text-red-600 dark:text-red-400" aria-hidden="true">*</span></x-input-label>
-                        <x-text-input id="code" name="code" class="mt-1 block w-full" :value="old('code', $program->code)" required />
+                        <x-text-input id="code" name="code" class="mt-1 block w-full" :value="old('code', $program->code)" maxlength="20" pattern="[A-Za-z0-9\-]+" title="Letters, numbers and dashes only." required />
                         <x-input-error :messages="$errors->program->get('code')" class="mt-2" />
                     </div>
                     <div class="sm:col-span-2">
                         <x-input-label for="name">{{ __('Name') }} <span class="text-red-600 dark:text-red-400" aria-hidden="true">*</span></x-input-label>
-                        <x-text-input id="name" name="name" class="mt-1 block w-full" :value="old('name', $program->name)" required />
+                        <x-text-input id="name" name="name" class="mt-1 block w-full" :value="old('name', $program->name)" maxlength="255" required />
                         <x-input-error :messages="$errors->program->get('name')" class="mt-2" />
                     </div>
                 </div>

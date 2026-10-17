@@ -16,7 +16,8 @@
                 <input type="radio" name="{{ \App\Support\FormName::html($name) }}" value="{{ $optionValue }}"
                     class="border-gray-300 text-indigo-600 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-indigo-500 dark:focus:ring-indigo-400 dark:focus:ring-offset-gray-800"
                     @checked($current !== null && (string) $current === (string) $optionValue)
-                    @if ($model) x-model="{{ $model }}" @endif>
+                    @if ($model) x-model="{{ $model }}" @endif
+                    @if ($required) required @endif>
                 {{ $optionLabel }}
             </label>
         @endforeach

@@ -6,6 +6,7 @@ use App\Enums\RecordStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SaveRecordStepRequest;
 use App\Http\Requests\SubmitRecordRequest;
+use App\Models\AccessLog;
 use App\Models\College;
 use App\Models\CumulativeRecord;
 use App\Models\User;
@@ -88,6 +89,8 @@ class CumulativeRecordController extends Controller
         $record->markStepCompleted('entry');
         $record->save();
 
+        AccessLog::logAction($user->id, AccessLog::ACTION_CREATE, 'Created Form 5 draft', $request->ip());
+
         return redirect()
             ->route('student.record.edit', [$record, Form5::nextStep('entry')])
             ->with('status', 'Draft saved.');
@@ -139,6 +142,8 @@ class CumulativeRecordController extends Controller
             $record->save();
         });
 
+        AccessLog::logAction($request->user()->id, AccessLog::ACTION_UPDATE, "Updated Form 5 step: {$step}", $request->ip());
+
         return redirect()
             ->route('student.record.edit', [$record, Form5::nextStep($step)])
             ->with('status', 'Draft saved.');
@@ -157,6 +162,8 @@ class CumulativeRecordController extends Controller
         $record->status = RecordStatus::Submitted;
         $record->submitted_at = now();
         $record->save();
+
+        AccessLog::logAction($request->user()->id, AccessLog::ACTION_SUBMIT, 'Submitted Form 5 record', $request->ip());
 
         if ($isFirstSubmission) {
             $student = $request->user()->loadMissing('program');
@@ -191,7 +198,7 @@ class CumulativeRecordController extends Controller
 
     private function storePhoto(SaveRecordStepRequest $request, CumulativeRecord $record): void
     {
-        $removing = $request->boolean('remove_photo') || $request->hasFile('photo');
+        $removing = $request->hasFile('photo');
 
         if ($removing && $record->photo_path) {
             Storage::delete($record->photo_path);

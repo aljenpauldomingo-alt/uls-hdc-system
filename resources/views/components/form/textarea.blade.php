@@ -1,6 +1,9 @@
 @props(['name', 'label', 'value' => null, 'required' => false, 'rows' => 3])
 
-@php($id = str_replace('.', '_', $name))
+@php
+    $id = str_replace('.', '_', $name);
+    $extra = $required ? ['required' => true] : [];
+@endphp
 
 <div {{ $attributes->only(['class', 'x-show', 'x-cloak']) }}>
     <x-input-label :for="$id">
@@ -8,6 +11,6 @@
     </x-input-label>
     <textarea id="{{ $id }}" name="{{ \App\Support\FormName::html($name) }}" rows="{{ $rows }}"
         class="mt-1 block w-full glass-input focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm dark:focus:border-indigo-400 dark:focus:ring-indigo-400"
-        {{ $attributes->except(['class', 'x-show', 'x-cloak']) }}>{{ old($name, $value) }}</textarea>
+        {{ $attributes->except(['class', 'x-show', 'x-cloak'])->merge($extra) }}>{{ old($name, $value) }}</textarea>
     <x-input-error :messages="$errors->get($name)" class="mt-2" />
 </div>

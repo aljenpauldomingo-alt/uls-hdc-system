@@ -13,6 +13,7 @@
  */
 html {
     background-color: #97b5b2;
+    scrollbar-gutter: stable;
 }
 
 html.dark {
@@ -27,7 +28,7 @@ html.dark {
     background-position: center;
     background-repeat: no-repeat;
     pointer-events: none;
-    transition: opacity 700ms ease-in-out;
+    transition: none;
 }
 
 .theme-bg::after {
@@ -37,7 +38,7 @@ html.dark {
 }
 
 .theme-bg-day {
-    background-image: url('/images/bg-day.png');
+    background-image: url('/images/bg-day.webp');
     opacity: 1;
 }
 
@@ -46,7 +47,7 @@ html.dark {
 }
 
 .theme-bg-night {
-    background-image: url('/images/bg-night.png');
+    background-image: url('/images/bg-night.webp');
     opacity: 0;
 }
 
@@ -54,15 +55,29 @@ html.dark {
     background-color: rgb(15 23 42 / 0.4);
 }
 
-/* Smaller .webp where supported; the .png above stays as the fallback. */
-@supports (background-image: image-set(url('/images/bg-day.webp') type('image/webp'))) {
-    .theme-bg-day {
-        background-image: image-set(url('/images/bg-day.webp') type('image/webp'), url('/images/bg-day.png') type('image/png'));
-    }
+/*
+ * Guest pages (login, register, password reset) use a dedicated hero photo
+ * instead of the shared day/night crossfade. Set on the <body> of the guest
+ * layout only, so authenticated pages keep the campus background.
+ */
+.guest-bg {
+    min-height: 100vh;
+}
 
-    .theme-bg-night {
-        background-image: image-set(url('/images/bg-night.webp') type('image/webp'), url('/images/bg-night.png') type('image/png'));
-    }
+.guest-bg::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    background-image: url('/images/login-page.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    pointer-events: none;
+}
+
+html.theme-transition .theme-bg {
+    transition: opacity 700ms ease-in-out;
 }
 
 html.dark .theme-bg-day {

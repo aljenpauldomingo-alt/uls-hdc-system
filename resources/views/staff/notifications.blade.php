@@ -2,24 +2,41 @@
     <x-slot name="header">
         <div class="flex flex-wrap items-center justify-between gap-2">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">{{ __('Notifications') }}</h2>
-            @if (Auth::user()->unreadNotifications()->exists())
-                <form method="POST" action="{{ route('staff.notifications.read-all') }}">
-                    @csrf
-                    <x-secondary-button type="submit">{{ __('Mark all as read') }}</x-secondary-button>
-                </form>
-            @endif
+            <form method="POST" action="{{ route('staff.notifications.read-all') }}"
+                data-mark-all-read
+                @class(['hidden' => ! Auth::user()->unreadNotifications()->exists()])>
+                @csrf
+                <x-secondary-button type="submit">{{ __('Mark all as read') }}</x-secondary-button>
+            </form>
         </div>
     </x-slot>
 
     <div class="py-8">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-            @if (session('status'))
-                <div class="rounded-md bg-green-50 dark:bg-green-500/10 px-4 py-3 text-sm text-green-800 dark:text-green-300" role="status">{{ session('status') }}</div>
-            @endif
+            <x-flash />
 
-            <div class="glass-panel sm:rounded-lg overflow-hidden">
+            <!-- Facebook-style Filter Tabs -->
+            <div class="flex items-center gap-2 border-b border-gray-300 dark:border-gray-600 pb-3 mb-4">
+                <a href="{{ route('staff.notifications.index', ['filter' => 'all']) }}" 
+                   class="rounded-lg px-4 py-2 text-sm font-bold transition-colors {{ $filter === 'all' ? 'bg-hdc-blue text-white shadow-md' : 'bg-white/50 text-gray-700 hover:bg-white dark:bg-slate-800/50 dark:text-gray-300 dark:hover:bg-slate-700' }}">
+                    All
+                </a>
+                <a href="{{ route('staff.notifications.index', ['filter' => 'unread']) }}" 
+                   class="rounded-lg px-4 py-2 text-sm font-bold transition-colors {{ $filter === 'unread' ? 'bg-hdc-pink text-white shadow-md' : 'bg-white/50 text-gray-700 hover:bg-white dark:bg-slate-800/50 dark:text-gray-300 dark:hover:bg-slate-700' }}">
+                    Unread
+                </a>
+                <a href="{{ route('staff.notifications.index', ['filter' => 'read']) }}" 
+                   class="rounded-lg px-4 py-2 text-sm font-bold transition-colors {{ $filter === 'read' ? 'bg-hdc-blue text-white shadow-md' : 'bg-white/50 text-gray-700 hover:bg-white dark:bg-slate-800/50 dark:text-gray-300 dark:hover:bg-slate-700' }}">
+                    Read
+                </a>
+            </div>
+
+            <div class="glass-panel sm:rounded-lg overflow-hidden"
+                data-notification-list
+                data-open-url="{{ route('staff.notifications.open', '__notification__') }}">
                 @forelse ($notifications as $notification)
                     <a href="{{ route('staff.notifications.open', $notification->id) }}"
+                        data-notification-id="{{ $notification->id }}"
                         @class([
                             'flex items-start gap-3 border-b border-gray-100 dark:border-gray-700 px-4 py-4 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-700/60',
                             'bg-indigo-50 dark:bg-indigo-500/10' => $notification->unread(),
@@ -42,7 +59,7 @@
                         </span>
                     </a>
                 @empty
-                    <p class="p-6 text-sm text-gray-600 dark:text-gray-400">{{ __('No notifications yet. You will be notified here when a student submits their record.') }}</p>
+                    <p data-notification-empty-state class="p-6 text-sm text-gray-600 dark:text-gray-400">{{ __('No notifications yet. You will be notified here when a student submits their record.') }}</p>
                 @endforelse
             </div>
 

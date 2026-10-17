@@ -56,6 +56,11 @@ class CumulativeRecordTest extends TestCase
 
     public function test_student_can_start_a_record_prefilled_from_their_account(): void
     {
+        if (! function_exists('imagecreatetruecolor')) {
+            $this->markTestSkipped('GD extension is not installed.');
+        }
+
+        Storage::fake();
         $student = User::factory()->student()->create();
 
         $response = $this->actingAs($student)->post(route('student.record.store'), [
@@ -63,8 +68,10 @@ class CumulativeRecordTest extends TestCase
             'school_year' => '2026-2027',
             'semester' => '1st',
             'student_type' => 'new',
+            'photo' => UploadedFile::fake()->image('me.jpg', 200, 200),
         ]);
 
+        $response->assertSessionHasNoErrors();
         $record = $student->cumulativeRecords()->sole();
         $response->assertRedirect(route('student.record.edit', [$record, 'personal']));
 
@@ -307,6 +314,10 @@ class CumulativeRecordTest extends TestCase
 
     public function test_photo_is_stored_privately_and_served_to_the_owner(): void
     {
+        if (! function_exists('imagecreatetruecolor')) {
+            $this->markTestSkipped('GD extension is not installed.');
+        }
+
         Storage::fake();
         $student = User::factory()->student()->create();
         $record = $this->recordFor($student);

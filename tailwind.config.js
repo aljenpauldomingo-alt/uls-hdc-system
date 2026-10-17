@@ -17,6 +17,15 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                hdc: {
+                    blue: '#0088D1',
+                    pink: '#D458A4',
+                    cream: '#F8FAFC',
+                    dark: '#0F172A',
+                    text: '#1E293B',
+                }
+            }
         },
     },
 

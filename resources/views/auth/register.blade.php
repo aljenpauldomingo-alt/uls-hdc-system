@@ -30,11 +30,11 @@
             <x-input-error :messages="$errors->get('middle_name')" class="mt-2" />
         </div>
 
-        <!-- Student Number -->
+        <!-- Username -->
         <div class="mt-4">
-            <x-input-label for="student_number" :value="__('Student Number')" />
-            <x-text-input id="student_number" class="block mt-1 w-full" type="text" name="student_number" :value="old('student_number')" required />
-            <x-input-error :messages="$errors->get('student_number')" class="mt-2" />
+            <x-input-label for="username" :value="__('Username')" />
+            <x-text-input id="username" class="block mt-1 w-full" type="text" name="username" :value="old('username')" required />
+            <x-input-error :messages="$errors->get('username')" class="mt-2" />
         </div>
 
         <!-- Program (grouped by college) -->

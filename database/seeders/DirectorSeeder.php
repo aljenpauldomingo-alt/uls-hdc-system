@@ -34,6 +34,7 @@ class DirectorSeeder extends Seeder
             'first_name' => $config['first_name'],
             'last_name' => $config['last_name'],
             'email' => $config['email'],
+            'username' => 'director',
             'password' => $config['password'],
         ]);
         $director->role = Role::Director;

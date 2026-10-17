@@ -25,8 +25,8 @@ class RegistrationTest extends TestCase
             'program_id' => Program::factory()->create()->id,
             'year_level' => 1,
             'email' => 'juan@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'password' => 'Password123',
+            'password_confirmation' => 'Password123',
         ], $overrides);
     }
 

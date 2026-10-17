@@ -6,6 +6,7 @@ use App\Enums\RecordStatus;
 use App\Http\Controllers\Controller;
 use App\Models\AccessLog;
 use App\Models\CumulativeRecord;
+use App\Support\Form5;
 use App\Support\StudentRecordQuery;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -32,6 +33,58 @@ class RecordController extends Controller
                 ->orderBy('users.first_name')
                 ->paginate(20)
                 ->withQueryString(),
+        ]);
+    }
+
+    /**
+     * Export the current filtered records list as a CSV download.
+     * Mirrors index()'s filters and visibility so the file matches the on-screen table.
+     */
+    public function export(Request $request): StreamedResponse
+    {
+        $query = StudentRecordQuery::fromRequest($request);
+
+        $students = $query->students()
+            ->with(['program.college', 'latestCumulativeRecord'])
+            ->withExists('entranceTestResults as has_sata')
+            ->orderBy('users.last_name')
+            ->orderBy('users.first_name')
+            ->cursor();
+
+        $filename = 'student-records-'.now()->format('Y-m-d-His').'.csv';
+
+        return response()->streamDownload(function () use ($students): void {
+            $out = fopen('php://output', 'w');
+
+            fputcsv($out, [
+                'Student',
+                'Student No.',
+                'Program',
+                'College',
+                'Year Level',
+                'Status',
+                'Submitted',
+                'SATA',
+            ]);
+
+            foreach ($students as $student) {
+                $record = $student->latestCumulativeRecord;
+
+                fputcsv($out, [
+                    trim("{$student->last_name}, {$student->first_name} {$student->middle_name}"),
+                    $student->student_number,
+                    $student->program?->code,
+                    $student->program?->college?->code,
+                    Form5::YEAR_LEVELS[$student->year_level] ?? '',
+                    $record?->status?->value ?? 'Not started',
+                    $record?->submitted_at?->format('Y-m-d') ?? '',
+                    $student->has_sata ? 'Encoded' : 'Not encoded',
+                ]);
+            }
+
+            fclose($out);
+        }, $filename, [
+            'Content-Type' => 'text/csv',
         ]);
     }
 
