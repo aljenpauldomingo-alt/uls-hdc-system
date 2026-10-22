@@ -59,7 +59,7 @@ class RecordListExportController extends Controller
             ]));
         }
 
-        $headers = ['Last name', 'First name', 'Middle name', 'Student no.', 'Program', 'College', 'Year level', 'Form 5 status', 'Submitted', 'SATA encoded', 'Intake status'];
+        $headers = ['Last name', 'First name', 'Middle name', 'Student no.', 'Program', 'College', 'Year level', 'Student type', 'Form 5 status', 'Submitted', 'SATA encoded', 'Intake status'];
         if ($sensitive) {
             $headers = [...$headers, 'Sex', 'Birth date', 'Civil status', 'Mobile no.', 'E-mail', 'Home address', 'Religion', 'Emergency contact', 'Emergency contact no.', 'SATA quotient', 'SATA quotient descriptor'];
         }
@@ -69,6 +69,7 @@ class RecordListExportController extends Controller
             $row = [
                 $student->last_name, $student->first_name, $student->middle_name, $student->student_number,
                 $student->program?->code, $student->program?->college?->code, Form5::YEAR_LEVELS[$student->year_level] ?? '',
+                Form5::STUDENT_TYPES[$record?->student_type] ?? '',
                 $record?->status->label() ?? 'Not started',
                 $record?->submitted_at ? CarbonImmutable::instance($record->submitted_at)->setTimezone(config('hdc.local_timezone'))->format('Y-m-d') : '',
                 $student->has_sata ? 'Yes' : 'No',
@@ -126,6 +127,7 @@ class RecordListExportController extends Controller
             'College' => ($filters['college_id'] ?? null) ? College::find($filters['college_id'])?->code : null,
             'Program' => ($filters['program_id'] ?? null) ? Program::find($filters['program_id'])?->code : null,
             'Year level' => Form5::YEAR_LEVELS[$filters['year_level'] ?? 0] ?? null,
+            'Student type' => Form5::STUDENT_TYPES[$filters['student_type'] ?? ''] ?? null,
             'Form 5 status' => StudentRecordQuery::STATUSES[$filters['status'] ?? ''] ?? null,
             'SATA' => StudentRecordQuery::SATA_FILTERS[$filters['sata'] ?? ''] ?? null,
             'Intake' => StudentRecordQuery::INTAKE_FILTERS[$filters['intake'] ?? ''] ?? null,

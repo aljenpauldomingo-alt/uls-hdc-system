@@ -7,7 +7,7 @@
 @endphp
 
 <form method="GET" action="{{ $action }}" class="glass-panel sm:rounded-lg p-4" role="search">
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div>
             <x-input-label for="q" :value="__('Search')" />
             <x-text-input id="q" name="q" type="search" class="mt-1 block w-full text-sm" :value="$filters['q']" placeholder="{{ __('Name or student no.') }}" />
@@ -43,6 +43,15 @@
             </select>
         </div>
 
+        <div>
+            <x-input-label for="student_type" :value="__('Student type')" />
+            <select id="student_type" name="student_type" class="{{ $selectClasses }}">
+                <option value="">{{ __('All student types') }}</option>
+                @foreach (Form5::STUDENT_TYPES as $type => $label)
+                    <option value="{{ $type }}" @selected($filters['student_type'] === $type)>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
         <div>
             <x-input-label for="status" :value="__('Status')" />
             <select id="status" name="status" class="{{ $selectClasses }}">

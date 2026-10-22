@@ -30,7 +30,7 @@ Built with Laravel 13, MySQL 8, Blade, Tailwind CSS, Alpine.js and Chart.js.
 | Role | Can do | Cannot do |
 | --- | --- | --- |
 | **Student** | Register, fill out and edit their own Form 5 until staff mark it reviewed. | See anyone else's record, SATA results, Form 8 or reports. |
-| **Counselor** | For students in their **assigned colleges only**: view Form 5, mark reviewed, encode SATA, fill out Form 8 intake interviews, view reports. | See students outside their colleges; edit a finalized intake interview. |
+| **Counselor** | For students in their **assigned colleges only**: view Form 5, mark reviewed, encode SATA, fill out Form 8 intake interviews, view reports. | See students outside their colleges; edit a finalized intake interview; see a student's own Form 5 psychological, relationship and coping answers (director only). |
 | **Director** | Everything a counselor can do, for **all colleges**; create and deactivate counselor accounts and assign colleges; manage colleges and programs; edit finalized intake interviews (logged). | |
 
 Every view of a full record, SATA result or intake interview, and every report view or export, is written to the

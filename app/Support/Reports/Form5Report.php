@@ -57,13 +57,14 @@ final class Form5Report extends Report
             ->selectRaw(implode(', ', [
                 'programs.college_id',
                 'users.year_level',
+                'r.student_type',
                 "{$statusExpression} as record_status",
                 'count(*) as students',
                 "sum(case when {$counted} and r.willing_to_see_counselor = 1 then 1 else 0 end) as willing_yes",
                 "sum(case when {$counted} and r.willing_to_see_counselor = 0 then 1 else 0 end) as willing_no",
                 ...array_map(fn (string $item) => "sum(case when {$counted} and r.self_description like '%\"{$item}\"%' then 1 else 0 end) as risk_{$item}", array_keys($riskItems)),
             ]))
-            ->groupBy('programs.college_id', 'users.year_level')
+            ->groupBy('programs.college_id', 'users.year_level', 'r.student_type')
             ->groupByRaw($statusExpression)
             ->get();
 
@@ -75,8 +76,12 @@ final class Form5Report extends Report
         $statusByYear = [];
         $risk = [];
         $willing = [];
+        $studentTypes = [];
         foreach ($rows as $row) {
             $year = $row->year_level ?? 'none';
+            if ($row->student_type !== null) {
+                $studentTypes[$row->student_type][$row->college_id] = ($studentTypes[$row->student_type][$row->college_id] ?? 0) + (int) $row->students;
+            }
             $statusByCollege[$row->college_id][$row->record_status] = ($statusByCollege[$row->college_id][$row->record_status] ?? 0) + (int) $row->students;
             $statusByYear[$year][$row->record_status] = ($statusByYear[$year][$row->record_status] ?? 0) + (int) $row->students;
             $willing[$row->college_id]['yes'] = ($willing[$row->college_id]['yes'] ?? 0) + (int) $row->willing_yes;
@@ -96,6 +101,8 @@ final class Form5Report extends Report
             tables: [
                 ReportTable::breakdown('Submission status by college', 'College', $colleges, $statuses, $statusByCollege),
                 ReportTable::breakdown('Submission status by year level', 'Year level', $yearLevels, $statuses, $statusByYear),
+                ReportTable::breakdown('Student type by college', 'Student type', Form5::STUDENT_TYPES, $colleges, $studentTypes,
+                    'Students with a record (draft, submitted or reviewed).'),
                 ReportTable::breakdown('Self-description items that signal risk, by college', 'Self-description', $riskItems, $colleges, $risk,
                     'Submitted and reviewed records only.'),
                 ReportTable::breakdown('Willing to see a counselor, by college', 'College', $colleges, ['yes' => 'Yes', 'no' => 'No'], $willing,

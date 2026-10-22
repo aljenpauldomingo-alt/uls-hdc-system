@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Enums\RecordStatus;
+use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Staff\RecordExportController;
 use App\Http\Requests\SaveRecordStepRequest;
@@ -10,6 +11,7 @@ use App\Http\Requests\SubmitRecordRequest;
 use App\Models\College;
 use App\Models\CumulativeRecord;
 use App\Models\User;
+use App\Notifications\RecordNeedsFollowUp;
 use App\Notifications\RecordSubmitted;
 use App\Support\Form5;
 use Illuminate\Database\Eloquent\Model;
@@ -176,6 +178,10 @@ class CumulativeRecordController extends Controller
             }
         }
 
+        if ($record->hasUrgentConcern()) {
+            $this->notifyDirectorsOfFollowUp($record->setRelation('student', $request->user()));
+        }
+
         return redirect()
             ->route('student.record.show', $record)
             ->with('status', 'Your Student Cumulative Record has been submitted. Thank you!');
@@ -201,6 +207,22 @@ class CumulativeRecordController extends Controller
         abort_unless($record->photo_path && Storage::exists($record->photo_path), 404);
 
         return Storage::response($record->photo_path);
+    }
+
+    /**
+     * An urgent self-reported concern goes to the director(s) only, as a name and a link.
+     */
+    private function notifyDirectorsOfFollowUp(CumulativeRecord $record): void
+    {
+        // A notification problem must never undo the student's submission.
+        try {
+            Notification::send(
+                User::query()->where('role', Role::Director)->where('is_active', true)->get(),
+                new RecordNeedsFollowUp($record),
+            );
+        } catch (Throwable $exception) {
+            report($exception);
+        }
     }
 
     private function loadForDisplay(CumulativeRecord $record): CumulativeRecord

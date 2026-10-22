@@ -62,6 +62,7 @@ class CumulativeRecordFactory extends Factory
             'self_description' => ['careful', 'serious', 'calm', 'dedicated', 'quiet'],
             'skills_to_develop' => ['study_skills'],
             'willing_to_see_counselor' => true,
+            ...array_fill_keys(Form5::concernYesNoFields(), false),
             'completed_steps' => Form5::formSteps(),
         ]);
     }

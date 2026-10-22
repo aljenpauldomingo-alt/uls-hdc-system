@@ -60,7 +60,8 @@ class RecordExportController extends Controller
             : null;
 
         try {
-            $document = RecordDocument::build($record, $request->user(), $sata, $intakes);
+            $document = RecordDocument::build($record, $request->user(), $sata, $intakes,
+                includeConcerns: $request->user()->can('viewConcerns', $record));
             $path = match ($format) {
                 'pdf' => DocumentWriter::recordPdf($document),
                 'xlsx' => DocumentWriter::recordXlsx($document),

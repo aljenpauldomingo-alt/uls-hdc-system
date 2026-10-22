@@ -6,6 +6,10 @@
     $yesNo = fn (?bool $value) => $value === null ? null : ($value ? 'Yes' : 'No');
     $option = fn (array $options, $key) => $key === null ? null : ($options[$key] ?? $key);
     $list = fn (array $options, ?array $keys) => implode(', ', Form5::labels($options, $keys)) ?: null;
+    // Form 5 concern answers: the student who owns the record and the director only.
+    $canSeeConcerns = (bool) auth()->user()?->can('viewConcerns', $record);
+    $answeredYes = fn (array $items) => implode(', ', array_values(array_filter($items, fn (string $label, string $key) => $record->{$key} === true, ARRAY_FILTER_USE_BOTH))) ?: 'None';
+    $concernSpecifyLabels = ['Specify (loss of significant others)', 'Other relationship concern', 'Other coping strategy'];
 @endphp
 
 <div class="space-y-6">
@@ -92,6 +96,14 @@
             'Willing to talk with a counselor' => $yesNo($record->willing_to_see_counselor),
             'Why?' => $record->counselor_willingness_reason,
         ],
+        'concerns' => $canSeeConcerns ? [
+            'Psychological concerns answered Yes' => $answeredYes(\App\Support\Form8::CONCERNS),
+            'Specify (loss of significant others)' => $record->concerns_specify,
+            'Relationship concerns answered Yes' => $answeredYes([...\App\Support\Form8::RELATIONSHIP_CONCERNS, 'relationship_others' => 'Others']),
+            'Other relationship concern' => $record->relationship_other,
+            'Coping strategies answered Yes' => $answeredYes([...\App\Support\Form8::COPING_STRATEGIES, 'coping_others' => 'Others']),
+            'Other coping strategy' => $record->coping_other,
+        ] : [],
     ] as $step => $fields)
         <section class="rounded-md border border-gray-200 dark:border-gray-700">
             <header class="flex items-center justify-between gap-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 px-4 py-2">
@@ -107,6 +119,11 @@
             </header>
 
             <div class="px-4 py-3">
+                @if ($step === 'concerns' && ! $canSeeConcerns)
+                    <p class="text-sm text-gray-600 dark:text-gray-400" data-concerns-restricted>{{ __('Restricted to the HDC Director.') }}</p>
+                @elseif ($step === 'concerns' && $record->hasNoConcernAnswers())
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('Not answered yet.') }}</p>
+                @else
                 @if ($step === 'family')
                     <div class="mb-4 grid gap-4 sm:grid-cols-2">
                         @foreach (Form5::PARENT_RELATIONS as $relation => $relationLabel)
@@ -148,13 +165,14 @@
 
                 <dl class="grid gap-x-6 gap-y-3 sm:grid-cols-2">
                     @foreach ($fields as $label => $value)
-                        @continue(blank($value) && in_array($label, ['Spouse name', 'No. of children', 'Reason for hospitalization', 'Surgery details', 'Allergy details', 'If interrupted, why?', 'Others (specify)', 'When', 'Specific work experience', 'What you like about it'], true))
+                        @continue(blank($value) && in_array($label, [...$concernSpecifyLabels, 'Spouse name', 'No. of children', 'Reason for hospitalization', 'Surgery details', 'Allergy details', 'If interrupted, why?', 'Others (specify)', 'When', 'Specific work experience', 'What you like about it'], true))
                         <div @class(['sm:col-span-2' => strlen((string) $value) > 80 || strlen($label) > 40])>
                             <dt class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ $label }}</dt>
                             <dd class="mt-0.5 whitespace-pre-line text-sm text-gray-900 dark:text-gray-100">{{ filled($value) ? $value : '—' }}</dd>
                         </div>
                     @endforeach
                 </dl>
+                @endif
             </div>
         </section>
     @endforeach

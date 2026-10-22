@@ -61,7 +61,7 @@ final class StudentRecordQuery
     private Collection $collegeIds;
 
     /**
-     * @param  array{college_id?: int|null, program_id?: int|null, year_level?: int|null, status?: string|null, sata?: string|null, intake?: string|null, q?: string|null}  $filters
+     * @param  array{college_id?: int|null, program_id?: int|null, year_level?: int|null, student_type?: string|null, status?: string|null, sata?: string|null, intake?: string|null, q?: string|null}  $filters
      */
     public function __construct(private User $viewer, private array $filters = [])
     {
@@ -81,6 +81,7 @@ final class StudentRecordQuery
         $collegeId = $request->integer('college_id') ?: null;
         $programId = $request->integer('program_id') ?: null;
         $yearLevel = $request->integer('year_level') ?: null;
+        $studentType = $request->string('student_type')->toString() ?: null;
         $status = $request->string('status')->toString() ?: null;
         $sata = $request->string('sata')->toString() ?: null;
         $intake = $request->string('intake')->toString() ?: null;
@@ -89,6 +90,7 @@ final class StudentRecordQuery
             'college_id' => $query->collegeIds->contains($collegeId) ? $collegeId : null,
             'program_id' => $programId && $query->programs()->contains('id', $programId) ? $programId : null,
             'year_level' => array_key_exists((int) $yearLevel, Form5::YEAR_LEVELS) ? $yearLevel : null,
+            'student_type' => array_key_exists((string) $studentType, Form5::STUDENT_TYPES) ? $studentType : null,
             'status' => in_array($status, $allowedStatuses ?? array_keys(self::STATUSES), true) ? $status : null,
             'sata' => array_key_exists((string) $sata, self::SATA_FILTERS) ? $sata : null,
             'intake' => array_key_exists((string) $intake, self::INTAKE_FILTERS) ? $intake : null,
@@ -137,6 +139,8 @@ final class StudentRecordQuery
     public function students(): Builder
     {
         return $this->baseStudents()
+            ->when($this->filters['student_type'] ?? null, fn (Builder $query, string $type) => $query
+                ->whereHas('latestCumulativeRecord', fn (Builder $record) => $record->where('student_type', $type)))
             ->when($this->filters['status'] ?? null, fn (Builder $query, string $status) => $this->applyStatus($query, $status))
             ->when($this->filters['sata'] ?? null, fn (Builder $query, string $sata) => $sata === 'encoded'
                 ? $query->whereHas('entranceTestResults')

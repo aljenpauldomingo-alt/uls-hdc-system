@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\RecordStatus;
 use App\Support\Form5;
+use App\Support\Form8;
 use Database\Factories\CumulativeRecordFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -33,8 +34,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'has_work_experience', 'work_experience_when', 'work_experience_details', 'work_experience_likes',
     'hobbies', 'self_description', 'skills_to_develop', 'skills_other',
     'willing_to_see_counselor', 'counselor_willingness_reason',
+    'eating_disorder', 'depression', 'discrimination', 'pregnancy', 'abortion', 'anxiety_stress', 'financial',
+    'alcohol_use', 'attempted_suicide', 'substance_abuse', 'body_dysmorphic', 'miscarriage', 'self_esteem',
+    'sexual_assault', 'acculturation', 'loss_of_significant_others', 'concerns_specify',
+    'family', 'same_sex', 'peers', 'significant_others', 'relationship_others', 'relationship_other',
+    'praying', 'laughing', 'drinking', 'malling', 'listening_to_music', 'crying', 'going_out_with_peers',
+    'partying', 'shopping', 'coping_others', 'coping_other',
 ])]
-#[Hidden(['family_view', 'family_concern', 'photo_path'])]
+#[Hidden(['family_view', 'family_concern', 'photo_path', 'concerns_specify', 'relationship_other', 'coping_other'])]
 class CumulativeRecord extends Model
 {
     /** @use HasFactory<CumulativeRecordFactory> */
@@ -55,7 +62,13 @@ class CumulativeRecord extends Model
      */
     protected function casts(): array
     {
+        $concernCasts = [
+            ...array_fill_keys(Form5::concernYesNoFields(), 'boolean'),
+            ...array_fill_keys(Form8::SPECIFY_FIELDS, 'encrypted'),
+        ];
+
         return [
+            ...$concernCasts,
             'status' => RecordStatus::class,
             'month_of_entry' => 'integer',
             'year_level' => 'integer',
@@ -189,6 +202,44 @@ class CumulativeRecord extends Model
     public function nextIncompleteStep(): string
     {
         return $this->missingSteps()[0] ?? 'review';
+    }
+
+    /**
+     * Whether any Form 5 concern listed in config('hdc.follow_up_concerns') was answered Yes.
+     */
+    public function hasUrgentConcern(): bool
+    {
+        foreach (Form8::followUpConcerns() as $concern) {
+            if ($this->{$concern} === true) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Psychological, relationship and coping items answered Yes (keys).
+     *
+     * @return list<string>
+     */
+    public function concernsAnsweredYes(): array
+    {
+        return array_values(array_filter(Form8::yesNoFields(), fn (string $field) => $this->{$field} === true));
+    }
+
+    /**
+     * True for records submitted before the concerns step existed (no answers at all).
+     */
+    public function hasNoConcernAnswers(): bool
+    {
+        foreach (Form5::concernYesNoFields() as $field) {
+            if ($this->{$field} !== null) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function age(): ?int

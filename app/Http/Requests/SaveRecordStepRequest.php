@@ -77,6 +77,7 @@ class SaveRecordStepRequest extends FormRequest
             'social' => $this->socialRules(),
             'self' => $this->selfDescriptionRules(),
             'skills' => $this->skillsRules(),
+            'concerns' => $this->concernRules(),
             default => [],
         };
     }
@@ -99,6 +100,7 @@ class SaveRecordStepRequest extends FormRequest
             'schools.*.school_name.required' => 'Enter the name of the school or remove this row.',
             'organizations.*.organization.required' => 'Enter the organization or remove this row.',
             'birth_date.before' => 'The birth date must be in the past.',
+            ...$this->concernMessages(),
             ...Validation::messages([
                 'last_name' => 'name', 'first_name' => 'name', 'middle_name' => 'name', 'spouse_name' => 'name',
                 'emergency_contact_name' => 'name', 'parents.*.name' => 'name', 'siblings.*.name' => 'name',
@@ -190,6 +192,13 @@ class SaveRecordStepRequest extends FormRequest
                 ...$data,
                 'skills_to_develop' => $data['skills_to_develop'] ?? [],
                 'skills_other' => $onlyIf(in_array('others', $data['skills_to_develop'] ?? [], true), 'skills_other'),
+            ],
+            'concerns' => [
+                ...$data,
+                'concerns_specify' => $onlyIf((bool) $data[Form5::CONCERN_SPECIFY_TRIGGER], 'concerns_specify'),
+                ...collect(Form5::CONCERN_OTHERS)
+                    ->mapWithKeys(fn (string $specify, string $others) => [$specify => $onlyIf((bool) $data[$others], $specify)])
+                    ->all(),
             ],
             default => $data,
         };
@@ -367,6 +376,41 @@ class SaveRecordStepRequest extends FormRequest
         return [
             'self_description' => ['required', 'array', 'min:'.Form5::MIN_SELF_DESCRIPTIONS],
             'self_description.*' => ['distinct', Rule::in(array_keys(Form5::SELF_DESCRIPTIONS))],
+        ];
+    }
+
+    /**
+     * Every Yes/No item must be answered; each "specify" field only when its question is Yes.
+     *
+     * @return array<string, mixed>
+     */
+    private function concernRules(): array
+    {
+        $rules = array_fill_keys(Form5::concernYesNoFields(), ['required', 'boolean']);
+        $rules['concerns_specify'] = ['nullable', 'required_if:'.Form5::CONCERN_SPECIFY_TRIGGER.',1', 'string', 'max:1000'];
+
+        foreach (Form5::CONCERN_OTHERS as $others => $specify) {
+            $rules[$specify] = ['nullable', "required_if:{$others},1", 'string', 'max:1000'];
+        }
+
+        return $rules;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function concernMessages(): array
+    {
+        $messages = [];
+        foreach (Form5::concernYesNoFields() as $field) {
+            $messages["{$field}.required"] = 'Please answer Yes or No.';
+        }
+
+        return [
+            ...$messages,
+            'concerns_specify.required_if' => 'Please specify (for example, who you lost).',
+            'relationship_other.required_if' => 'Please specify the other relationship concern.',
+            'coping_other.required_if' => 'Please specify the other coping strategy.',
         ];
     }
 

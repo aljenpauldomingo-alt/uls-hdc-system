@@ -38,6 +38,24 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Form 5: Supportive Message for Urgent Answers
+    |--------------------------------------------------------------------------
+    |
+    | Shown to a student on the "Psychological, Relationship and Coping" step
+    | when they answer Yes to one of the follow_up_concerns above. HDC may
+    | edit this text and the office contact (HDC_OFFICE_CONTACT in .env).
+    |
+    */
+
+    'student_support' => [
+        'title' => 'You do not have to go through this alone',
+        'message' => 'Thank you for trusting us with your answer. The Human Development Center is here to listen and help, at your own pace. You are welcome to visit or contact us any time.',
+        'office_contact' => env('HDC_OFFICE_CONTACT', 'Human Development Center, University of La Salette, Santiago City'),
+        'hotline' => 'If you need someone to talk to right now, you can call the NCMH Crisis Hotline at 1553 (free, 24/7).',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Reports: Smallest Group Shown
     |--------------------------------------------------------------------------
     |

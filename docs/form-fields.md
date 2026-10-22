@@ -31,7 +31,7 @@ A 2x2 photo box appears top-right on paper. Optional photo upload.
 | Month of entry | select | January–December |
 | School year | text | e.g. 2026-2027 |
 | Semester | radio | 1st Semester, 2nd Semester, Summer |
-| Student type | radio | New, Transferee, Returnee, 2nd Courser, Earning Units |
+| Student type | radio | New, Transferee, Returnee, 2nd Courser, Earning Units, Graduate School |
 | Photo | image upload | optional, 2x2 |
 
 ### A1. Personal data (Normal, except where marked)
@@ -146,7 +146,23 @@ Checkboxes (multi): Communication, Decision-making, Critical Thinking, Getting t
 | Would you be willing to talk with or seek help from a counselor any time regarding your concerns? | Yes/No |
 | Why? | text |
 
-### A10. Data privacy consent (required before submit)
+### A10. Psychological, relationship and coping (Highly sensitive; added October 2026, not on the paper form)
+Wizard step "Psychological, Relationship and Coping", right before "Review and Consent". Uses the **same keys and labels as Form 8 (C2–C4)** so the student's answers can be compared with the counselor's.
+Every Yes/No item is required. Note shown at the top: "Your answers are confidential and are only seen by the HDC Director. They help the HDC support you."
+
+| Group | Items (Yes/No each) | Specify field |
+| --- | --- | --- |
+| Psychological Concerns | the 16 concerns in C2 (eating_disorder … loss_of_significant_others) | `concerns_specify`, required only when Loss of significant others = Yes |
+| Relationship Concerns | family, same_sex, peers, significant_others, `relationship_others` ("Others") | `relationship_other`, required only when Others = Yes |
+| Coping Strategies | the 9 strategies in C4, `coping_others` ("Others") | `coping_other`, required only when Others = Yes |
+
+- Storage: one nullable boolean column per item on `cumulative_records` (null = not answered); specify fields encrypted.
+- Who sees the answers per student: the student (own record) and the **director only**. Counselors see "Restricted to the HDC Director" on the record page and in exports.
+- Urgent items (`config('hdc.follow_up_concerns')`: attempted suicide, rape or sexual assault, substance abuse): the student sees a supportive message with the HDC office contact and the NCMH Crisis Hotline 1553 (`config('hdc.student_support')`), and on submit the director gets a notification with the student's name and a link only.
+- Reports: "Self-reported concerns (Form 5)" table in the Psychological concerns report (latest submitted/reviewed record, counts under 5 shown as "<5").
+- Records submitted before this step existed keep their status; the step is marked complete with no answers ("Not answered yet").
+
+### A11. Data privacy consent (required before submit)
 Checkbox, required:
 > I have read and understood the ULS Data Privacy Notice available at https://uls.edu.ph/privacy_notice, and I acknowledge that the University will process and retain my personal data for the declared purposes and for as long as necessary, in accordance with applicable laws and regulations.
 

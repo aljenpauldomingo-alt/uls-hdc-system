@@ -45,13 +45,14 @@ final class RecordDocument
     /**
      * @param  Collection<int, EntranceTestResult>|null  $sata  SATA results to include (null = leave out)
      * @param  Collection<int, IntakeInterview>|null  $intakes  intake interviews to include (null = leave out)
+     * @param  bool  $includeConcerns  the Form 5 concern answers (student's own copy and the director only)
      */
-    public static function build(CumulativeRecord $record, User $generatedBy, ?Collection $sata = null, ?Collection $intakes = null): self
+    public static function build(CumulativeRecord $record, User $generatedBy, ?Collection $sata = null, ?Collection $intakes = null, bool $includeConcerns = false): self
     {
         $record->loadMissing(['student.program.college', 'program.college', 'parents', 'siblings', 'schools', 'organizations']);
         $student = $record->student;
 
-        $sections = self::form5Sections($record);
+        $sections = self::form5Sections($record, $includeConcerns);
 
         if ($sata !== null) {
             $sections[] = self::sataSection($sata);
@@ -90,7 +91,7 @@ final class RecordDocument
     /**
      * @return list<array{title: string, fields: list<array{0: string, 1: string}>, tables: list<array{title: string, headers: list<string>, rows: list<list<string>>}>, pageBreak: bool}>
      */
-    private static function form5Sections(CumulativeRecord $record): array
+    private static function form5Sections(CumulativeRecord $record, bool $includeConcerns): array
     {
         $yesNo = fn (?bool $value) => $value === null ? '' : ($value ? 'Yes' : 'No');
         $option = fn (array $options, $key) => $key === null ? '' : (string) ($options[$key] ?? $key);
@@ -194,10 +195,40 @@ final class RecordDocument
                 'Willing to talk with a counselor' => $yesNo($record->willing_to_see_counselor),
                 'Why?' => $record->counselor_willingness_reason,
             ]),
+            ...self::concernSections($record, $includeConcerns),
             self::section('Data Privacy Consent', [
                 'Consent given' => $record->consent_given ? 'Yes' : 'No',
                 'Signature over printed name' => $record->consent_name,
                 'Date' => $record->consented_at ? self::localDate($record->consented_at, 'F j, Y') : '',
+            ]),
+        ];
+    }
+
+    /**
+     * Form 5 "Psychological, Relationship and Coping" answers, or a single "restricted" line.
+     *
+     * @return list<array{title: string, fields: list<array{0: string, 1: string}>, tables: list<array{title: string, headers: list<string>, rows: list<list<string>>}>, pageBreak: bool}>
+     */
+    private static function concernSections(CumulativeRecord $record, bool $includeConcerns): array
+    {
+        $title = Form5::STEPS['concerns'];
+
+        if (! $includeConcerns) {
+            return [self::section($title, ['Answers' => 'Restricted to the HDC Director.'])];
+        }
+
+        $answer = fn (?bool $value) => $value === null ? '' : ($value ? 'Yes' : 'No');
+        $yesNoRows = fn (array $items) => collect($items)->map(fn (string $label, string $key) => [$label, $answer($record->{$key})])->values()->all();
+
+        return [
+            self::section($title.': Psychological Concerns', ['Specify (loss of significant others)' => $record->concerns_specify], [
+                self::table('', ['Concern', 'Answer'], $yesNoRows(Form8::CONCERNS)),
+            ]),
+            self::section('Relationship Concerns', ['Others (specify)' => $record->relationship_other], [
+                self::table('', ['Concern', 'Answer'], $yesNoRows([...Form8::RELATIONSHIP_CONCERNS, 'relationship_others' => 'Others'])),
+            ]),
+            self::section('Coping Strategies', ['Others (specify)' => $record->coping_other], [
+                self::table('', ['Strategy', 'Answer'], $yesNoRows([...Form8::COPING_STRATEGIES, 'coping_others' => 'Others'])),
             ]),
         ];
     }

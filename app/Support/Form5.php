@@ -23,6 +23,7 @@ final class Form5
         'social' => 'Social Functions',
         'self' => 'Self-Description',
         'skills' => 'Skills and Counseling',
+        'concerns' => 'Psychological, Relationship and Coping',
         'review' => 'Review and Consent',
     ];
 
@@ -43,6 +44,7 @@ final class Form5
         'returnee' => 'Returnee',
         'second_courser' => '2nd Courser',
         'earning_units' => 'Earning Units',
+        'graduate_school' => 'Graduate School',
     ];
 
     public const SEXES = [
@@ -156,6 +158,22 @@ final class Form5
         'others' => 'Others',
     ];
 
+    /**
+     * "Others" Yes/No questions that only Form 5 has (Form 8 just has the specify text).
+     * Each one makes its specify field required when answered Yes.
+     *
+     * @var array<string, string> Yes/No field => specify field
+     */
+    public const CONCERN_OTHERS = [
+        'relationship_others' => 'relationship_other',
+        'coping_others' => 'coping_other',
+    ];
+
+    /**
+     * Concern that makes the psychological concerns "specify" field required (as on the paper form).
+     */
+    public const CONCERN_SPECIFY_TRIGGER = 'loss_of_significant_others';
+
     public const MAX_SIBLINGS = 10;
 
     public const MAX_SCHOOLS = 10;
@@ -201,6 +219,17 @@ final class Form5
         $start = (int) $date->format('n') >= 6 ? $year : $year - 1;
 
         return $start.'-'.($start + 1);
+    }
+
+    /**
+     * Every Yes/No question on the "Psychological, Relationship and Coping" step. The concern,
+     * relationship and coping keys are the same as Form 8's, so the two forms can be compared.
+     *
+     * @return list<string>
+     */
+    public static function concernYesNoFields(): array
+    {
+        return [...Form8::yesNoFields(), ...array_keys(self::CONCERN_OTHERS)];
     }
 
     /**

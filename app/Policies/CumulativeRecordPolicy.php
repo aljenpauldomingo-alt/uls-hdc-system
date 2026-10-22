@@ -43,6 +43,15 @@ class CumulativeRecordPolicy
     /**
      * Only students start their own Form 5.
      */
+    /**
+     * The student's own answers on the Form 5 "Psychological, Relationship and Coping" step:
+     * the student who owns the record and the director only. Counselors never see them.
+     */
+    public function viewConcerns(User $user, CumulativeRecord $record): bool
+    {
+        return $this->view($user, $record) && ($user->isStudent() || $user->isDirector());
+    }
+
     public function create(User $user): bool
     {
         return $user->isStudent();
