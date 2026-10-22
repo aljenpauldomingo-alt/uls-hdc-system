@@ -31,7 +31,7 @@ class BrandingTest extends TestCase
     public function test_guest_pages_show_the_logo_title_glass_card_and_favicons(): void
     {
         $user = User::factory()->create();
-        $pages = [route('login'), route('register'), route('password.request'), route('password.reset', Password::createToken($user))];
+        $pages = [url('/'), route('login'), route('register'), route('password.request'), route('password.reset', Password::createToken($user))];
 
         foreach ($pages as $url) {
             $response = $this->get($url)->assertOk()
@@ -39,6 +39,7 @@ class BrandingTest extends TestCase
                 ->assertSee('alt="ULS Human Development Center"', false)
                 ->assertSee('h-24 w-24', false)
                 ->assertSee('glass-login', false)
+                ->assertSee('class="beach-anim"', false)
                 ->assertSeeTextInOrder(['Human Development Center', 'University of La Salette, Inc.']);
 
             foreach (self::FAVICONS as $favicon) {
