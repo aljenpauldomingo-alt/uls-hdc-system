@@ -59,8 +59,8 @@ class ThemeToggleTest extends TestCase
         // The saved theme is applied in <head>, before anything renders.
         $this->assertStringStartsWith('<script>', ltrim(explode('<head>', $html, 2)[1]));
         $this->assertLessThan(strpos($html, '</head>'), strpos($html, "localStorage.getItem('theme')"));
-        $this->assertStringContainsString(asset('images/bg-day.png'), $html);
-        $this->assertStringContainsString(asset('images/bg-night.png'), $html);
+        $this->assertStringContainsString(asset('images/bg-day-pink.jpg'), $html);
+        $this->assertStringContainsString(asset('images/bg-night-pink.jpg'), $html);
 
         // Background layers come first in <body>, exactly once.
         $this->assertStringStartsWith('<div class="beach-bg beach-day"', ltrim(explode('>', explode('<body', $html, 2)[1], 2)[1]));
@@ -68,5 +68,13 @@ class ThemeToggleTest extends TestCase
         $this->assertSame(1, substr_count($html, 'class="beach-bg beach-night"'));
         $this->assertSame(1, substr_count($html, 'class="beach-tint"'));
         $this->assertStringNotContainsString('bg-gray-100 dark:bg-gray-900', $html);
+
+        // Animated layers: SVG filters only (no GIF or video), static with reduced motion, paused in hidden tabs.
+        $this->assertSame(1, substr_count($html, 'class="beach-anim"'));
+        $this->assertStringContainsString('<feTurbulence data-beach-noise="water"', $html);
+        $this->assertStringContainsString('<feTurbulence data-beach-noise="palms"', $html);
+        $this->assertStringContainsString('@media (prefers-reduced-motion: reduce) { .beach-anim { display: none; } }', $html);
+        $this->assertStringContainsString("addEventListener('visibilitychange'", $html);
+        $this->assertDoesNotMatchRegularExpression('/\.(gif|mp4|webm)\b|<video/i', $html);
     }
 }

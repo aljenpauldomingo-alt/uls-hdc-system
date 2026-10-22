@@ -60,7 +60,7 @@
 
     .glass-login a.underline,
     .glass-login button.underline {
-        @apply font-medium text-pink-950 decoration-pink-500/60 hover:text-pink-800 hover:decoration-pink-700 dark:text-pink-200 dark:decoration-pink-300/60 dark:hover:text-pink-100 dark:hover:decoration-pink-100;
+        @apply font-medium text-pink-800 decoration-pink-500/60 hover:text-pink-950 hover:decoration-pink-800 dark:text-pink-200 dark:decoration-pink-300/60 dark:hover:text-pink-100 dark:hover:decoration-pink-100;
     }
 
     .glass-login .glass-input {
