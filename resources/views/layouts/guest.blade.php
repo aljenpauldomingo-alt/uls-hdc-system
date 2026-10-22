@@ -27,11 +27,11 @@
 
         <div class="relative z-0 min-h-screen flex flex-col justify-center items-center px-4 pt-16 pb-8 sm:pt-8">
             <div class="glass-login w-full sm:max-w-md px-6 py-6 sm:px-8">
-                <a href="/" class="flex flex-col items-center gap-3 text-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500">
+                <a href="/" class="flex flex-col items-center gap-3 text-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-400">
                     <x-application-logo class="h-24 w-24" />
                     <span>
                         <span class="glass-title block text-2xl font-bold tracking-tight">{{ __('Human Development Center') }}</span>
-                        <span class="mt-1 block text-sm font-medium text-gray-800 dark:text-gray-200">University of La Salette, Inc.</span>
+                        <span class="mt-1 block text-sm font-medium text-pink-950 dark:text-pink-50">University of La Salette, Inc.</span>
                     </span>
                 </a>
 

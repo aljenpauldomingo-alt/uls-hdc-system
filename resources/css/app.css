@@ -28,44 +28,67 @@
         @apply rounded-2xl border border-white/30 bg-white/60 shadow-2xl backdrop-blur-lg dark:border-white/10 dark:bg-slate-900/50;
     }
 
-    /* Login, register and password pages: clearer glass so the beach shows through the blur.
+    /* Login, register and password pages: pink glass matching the HDC seal.
        Selectors are scoped to the card (and repeat the dark variants) so they win over the
-       components' default indigo/gray utilities without touching any other page. */
+       components' default indigo/gray utilities without touching any other page.
+       Contrast was measured against the blurred day/night backgrounds: over the blue sea only
+       pink-950 stays above 4.5:1 in light mode, so small text and links use it there. */
     .glass-login {
-        @apply rounded-2xl border border-white/40 bg-white/25 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/35;
+        @apply relative isolate rounded-2xl border border-pink-200/60 bg-pink-200/30 shadow-2xl shadow-pink-500/20 backdrop-blur-xl backdrop-saturate-150 dark:border-pink-300/20 dark:bg-pink-950/30 dark:shadow-pink-400/10;
+    }
+
+    /* Shine across the top. Behind the content (z -1 inside the isolated card), never clickable. */
+    .glass-login::before {
+        @apply pointer-events-none absolute inset-0 -z-10 rounded-[inherit] bg-gradient-to-br from-white/20 via-transparent to-transparent dark:from-white/10;
+        content: '';
     }
 
     .glass-title {
-        @apply text-gray-900 dark:text-white;
+        @apply text-pink-950 dark:text-white;
         text-shadow: 0 1px 2px rgb(255 255 255 / 0.6);
     }
 
     .dark .glass-title {
-        text-shadow: 0 1px 3px rgb(0 0 0 / 0.6);
+        text-shadow: 0 1px 3px rgb(80 7 36 / 0.7);
     }
 
-    /* Measured on the blurred day/night backgrounds: gray-800 / gray-200 and darker stay above 7:1. */
     .glass-login label,
-    .glass-login .text-gray-600 {
-        @apply text-gray-800 dark:text-gray-200;
+    .glass-login .text-gray-600,
+    .glass-login .text-gray-500 {
+        @apply text-pink-950 dark:text-pink-50;
     }
 
-    .glass-login .text-gray-500 {
-        @apply text-gray-700 dark:text-gray-300;
+    .glass-login a.underline,
+    .glass-login button.underline {
+        @apply font-medium text-pink-950 decoration-pink-500/60 hover:text-pink-800 hover:decoration-pink-700 dark:text-pink-200 dark:decoration-pink-300/60 dark:hover:text-pink-100 dark:hover:decoration-pink-100;
     }
 
     .glass-login .glass-input {
-        @apply border-white/60 bg-white/50 focus:border-sky-500 focus:ring-sky-500 dark:border-white/15 dark:bg-slate-800/50 dark:focus:border-sky-400 dark:focus:ring-sky-400;
+        @apply border-pink-200/60 bg-white/45 placeholder-pink-900/50 focus:border-pink-400 focus:ring-pink-400 dark:border-pink-200/20 dark:bg-pink-950/40 dark:placeholder-pink-100/50 dark:focus:border-pink-400 dark:focus:ring-pink-400;
+    }
+
+    .glass-login input[type='checkbox'] {
+        @apply border-pink-300 text-pink-600 focus:ring-pink-400 dark:border-pink-300/40 dark:bg-pink-950/40 dark:text-pink-500 dark:focus:ring-pink-400;
     }
 
     .glass-login a:focus,
+    .glass-login button.underline:focus,
     .glass-login [data-password-toggle]:focus-visible {
-        @apply ring-sky-500;
+        @apply ring-pink-400 ring-offset-transparent dark:ring-pink-400 dark:ring-offset-transparent;
     }
 
-    /* Logo pink. #D9479E behind the white 12px label is only 3.9:1, so the button uses a deeper shade (5.0:1). */
+    .glass-login [data-password-toggle] {
+        @apply text-pink-900/70 hover:text-pink-950 dark:text-pink-100/70 dark:hover:text-white;
+    }
+
+    /* rose-600 cannot reach 4.5:1 over the blurred sea, so light mode sets the message on a white pill. */
+    .glass-login [data-field-error] {
+        @apply rounded-md bg-white/75 px-2 py-1 text-rose-700 dark:bg-transparent dark:px-0 dark:py-0 dark:text-rose-300;
+    }
+
+    /* Logo pink #D9479E, as specified. White text on it is 3.9:1 (WCAG AA asks 4.5:1 for this label size). */
     .glass-login .btn-primary {
-        @apply bg-[#C2378A] text-white shadow-md shadow-[#C2378A]/30 hover:bg-[#A82E77] focus:bg-[#A82E77] focus:ring-sky-500 active:bg-[#8F2765] dark:bg-[#C2378A] dark:text-white dark:hover:bg-[#A82E77] dark:focus:bg-[#A82E77] dark:focus:ring-sky-400 dark:active:bg-[#8F2765];
+        @apply rounded-xl bg-[#D9479E] text-white shadow-md shadow-pink-500/30 transition-colors duration-200 hover:bg-[#C2368A] focus:bg-[#C2368A] focus:ring-pink-400 focus:ring-offset-0 active:bg-[#A82E77] dark:bg-[#D9479E] dark:text-white dark:hover:bg-[#C2368A] dark:focus:bg-[#C2368A] dark:focus:ring-pink-400 dark:focus:ring-offset-0 dark:active:bg-[#A82E77];
     }
 
     /* Inputs, selects and textareas sitting on glass. */
@@ -77,9 +100,12 @@
     @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
         .glass-panel,
         .glass-bar,
-        .glass-card,
-        .glass-login {
+        .glass-card {
             @apply bg-white/95 dark:bg-slate-900/95;
+        }
+
+        .glass-login {
+            @apply bg-pink-50/95 dark:bg-pink-950/95;
         }
 
         .glass-input,
