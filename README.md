@@ -31,7 +31,7 @@ Built with Laravel 13, MySQL 8, Blade, Tailwind CSS, Alpine.js and Chart.js.
 | --- | --- | --- |
 | **Student** | Register, fill out and edit their own Form 5 until staff mark it reviewed. | See anyone else's record, SATA results, Form 8 or reports. |
 | **Counselor** | For students in their **assigned colleges only**: view Form 5, mark reviewed, encode SATA, fill out Form 8 intake interviews, view reports. | See students outside their colleges; edit a finalized intake interview; see a student's own Form 5 psychological, relationship and coping answers (director only). |
-| **Director** | Everything a counselor can do, for **all colleges**; create and deactivate counselor accounts and assign colleges; manage colleges and programs; edit finalized intake interviews (logged). | |
+| **Director** | Everything a counselor can do, for **all colleges**; create and deactivate counselor accounts and assign colleges; manage colleges and programs; edit finalized intake interviews (logged); see students' own Form 5 concern answers; use the **At Risk** page (students with concerns on their latest submitted Form 5 or finalized Form 8, with follow-up tracking; views, exports and follow-up changes are logged). | |
 
 Every view of a full record, SATA result or intake interview, and every report view or export, is written to the
 `access_logs` table (who, what, when, IP).

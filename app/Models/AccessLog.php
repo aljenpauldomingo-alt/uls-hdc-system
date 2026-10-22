@@ -40,6 +40,12 @@ class AccessLog extends Model
 
     public const ACTION_DELETE_BACKUP = 'delete_backup';
 
+    public const ACTION_VIEW_AT_RISK = 'view_at_risk';
+
+    public const ACTION_EXPORT_AT_RISK = 'export_at_risk';
+
+    public const ACTION_UPDATE_FOLLOW_UP = 'update_followup';
+
     /**
      * @return BelongsTo<IntakeInterview, $this>
      */

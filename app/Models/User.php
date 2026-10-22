@@ -139,6 +139,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Director's follow-up tracking for this student (At Risk page).
+     *
+     * @return HasOne<StudentFollowUp, $this>
+     */
+    public function followUp(): HasOne
+    {
+        return $this->hasOne(StudentFollowUp::class, 'student_id');
+    }
+
+    /**
      * The student's most recent intake interview (by creation).
      *
      * @return HasOne<IntakeInterview, $this>

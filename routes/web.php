@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Director\AtRiskController;
 use App\Http\Controllers\Director\BackupController;
 use App\Http\Controllers\Director\CollegeController;
 use App\Http\Controllers\Director\CounselorController;
@@ -59,6 +60,11 @@ Route::middleware(['auth', 'verified', 'role:counselor'])->prefix('counselor')->
 
 Route::middleware(['auth', 'verified', 'role:director'])->prefix('director')->name('director.')->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+
+    // Students with self-reported (Form 5) or interview (Form 8) concerns, with follow-up tracking
+    Route::get('/at-risk', [AtRiskController::class, 'index'])->name('at-risk.index');
+    Route::get('/at-risk/export', [AtRiskController::class, 'export'])->name('at-risk.export');
+    Route::patch('/at-risk/{student}/follow-up', [AtRiskController::class, 'updateFollowUp'])->name('at-risk.follow-up');
 
     Route::resource('counselors', CounselorController::class)->except(['show', 'destroy']);
     Route::patch('/counselors/{counselor}/deactivate', [CounselorController::class, 'deactivate'])->name('counselors.deactivate');

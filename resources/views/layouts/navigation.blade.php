@@ -34,6 +34,11 @@
                         <x-nav-link :href="route('staff.tracker')" :active="request()->routeIs('staff.tracker')">
                             {{ __('Tracker') }}
                         </x-nav-link>
+                        @if ($user->isDirector())
+                            <x-nav-link :href="route('director.at-risk.index')" :active="request()->routeIs('director.at-risk.*')">
+                                {{ __('At Risk') }}
+                            </x-nav-link>
+                        @endif
                         <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
                             {{ __('Reports') }}
                         </x-nav-link>
@@ -110,6 +115,11 @@
                 <x-responsive-nav-link :href="route('staff.tracker')" :active="request()->routeIs('staff.tracker')">
                     {{ __('Tracker') }}
                 </x-responsive-nav-link>
+                @if ($user->isDirector())
+                    <x-responsive-nav-link :href="route('director.at-risk.index')" :active="request()->routeIs('director.at-risk.*')">
+                        {{ __('At Risk') }}
+                    </x-responsive-nav-link>
+                @endif
                 <x-responsive-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
                     {{ __('Reports') }}
                 </x-responsive-nav-link>
