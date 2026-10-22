@@ -6,6 +6,12 @@
     display: none !important;
 }
 
+/* Our own show/hide button replaces Edge's built-in password "reveal" eye, so there are never two. */
+[data-password-field] input::-ms-reveal,
+[data-password-field] input::-ms-clear {
+    display: none;
+}
+
 @layer components {
     /* Content cards, tables, wizard panel and modals. Opaque enough for long forms. */
     .glass-panel {
