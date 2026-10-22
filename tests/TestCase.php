@@ -14,6 +14,26 @@ abstract class TestCase extends BaseTestCase
      */
     protected ?Closure $pwnedPasswords = null;
 
+    /**
+     * Runs inside parent::setUp(), before RefreshDatabase migrates, so a misconfigured
+     * environment can never wipe a real database.
+     *
+     * @return array<class-string, class-string>
+     */
+    protected function setUpTraits()
+    {
+        $connection = config('database.default');
+        $database = config("database.connections.{$connection}.database");
+
+        if ($connection !== 'sqlite' || $database !== ':memory:') {
+            fwrite(STDERR, "\nTests aborted: they must use in-memory SQLite, but the connection is [{$connection}] with database [{$database}].\nCheck phpunit.xml and your shell environment.\n");
+
+            exit(1);
+        }
+
+        return parent::setUpTraits();
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
