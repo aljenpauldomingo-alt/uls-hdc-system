@@ -73,6 +73,7 @@ class ThemeToggleTest extends TestCase
         $this->assertSame(1, substr_count($html, 'class="beach-anim"'));
         $this->assertStringContainsString('<feTurbulence data-beach-noise="water"', $html);
         $this->assertStringContainsString('<feTurbulence data-beach-noise="palms"', $html);
+        $this->assertStringContainsString('<div class="beach-moon"></div>', $html);
         $this->assertStringContainsString('@media (prefers-reduced-motion: reduce) { .beach-anim { display: none; } }', $html);
         $this->assertStringContainsString("addEventListener('visibilitychange'", $html);
         $this->assertDoesNotMatchRegularExpression('/\.(gif|mp4|webm)\b|<video/i', $html);

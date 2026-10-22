@@ -34,7 +34,7 @@
        Contrast was measured against the blurred day/night backgrounds: over the blue sea only
        pink-950 stays above 4.5:1 in light mode, so small text and links use it there. */
     .glass-login {
-        @apply relative isolate rounded-2xl border border-pink-200/60 bg-pink-200/30 shadow-2xl shadow-pink-500/20 backdrop-blur-xl backdrop-saturate-150 dark:border-pink-300/20 dark:bg-pink-950/30 dark:shadow-pink-400/10;
+        @apply relative isolate rounded-2xl border border-white/60 bg-pink-50/40 shadow-2xl shadow-pink-500/20 backdrop-blur-xl backdrop-saturate-150 dark:border-pink-300/20 dark:bg-pink-950/30 dark:shadow-pink-400/10;
     }
 
     /* Shine across the top. Behind the content (z -1 inside the isolated card), never clickable. */

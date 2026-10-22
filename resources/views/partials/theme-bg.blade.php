@@ -1,12 +1,13 @@
 <div class="beach-bg beach-day" aria-hidden="true"></div>
 <div class="beach-bg beach-night" aria-hidden="true"></div>
-{{-- Living beach: rippling water, swaying palms, shoreline foam, drifting clouds (day) and twinkling
-     stars (night). Coordinates are image pixels (1680x944). Hidden with prefers-reduced-motion and
+{{-- Living beach: rippling water, swaying palms, shoreline foam, drifting pink clouds (day), twinkling
+     stars and a breathing moon glow (night). Coordinates are image pixels (1680x944). Hidden with prefers-reduced-motion and
      paused while the tab is hidden; styles are in partials/theme-head. --}}
 <div class="beach-anim" aria-hidden="true" data-beach-anim
     data-day="{{ asset('images/bg-day-pink.jpg') }}" data-night="{{ asset('images/bg-night-pink.jpg') }}">
     <div class="beach-cover">
         <div class="beach-clouds"></div>
+        <div class="beach-moon"></div>
         <div class="beach-stars">
             @foreach ([[6, 8, 0], [14, 22, 1.2], [22, 5, 2.1], [31, 15, .6], [38, 30, 2.8], [45, 9, 1.7], [52, 20, .3], [58, 4, 2.4], [63, 34, 1], [74, 10, 3.1], [77, 38, 1.5], [10, 36, 2.6], [27, 40, .9], [48, 38, 3.4]] as [$x, $y, $delay])
                 <i style="left: {{ $x }}%; top: {{ $y }}%; animation-delay: -{{ $delay }}s"></i>

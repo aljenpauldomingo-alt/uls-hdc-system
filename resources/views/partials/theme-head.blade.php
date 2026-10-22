@@ -39,8 +39,8 @@ window.toggleTheme = function () {
     html.dark .beach-foam { animation-name: beach-foam-night; }
     @keyframes beach-foam-night { to { transform: translate(3px, 4px); opacity: .22; } }
     /* Day clouds: a seamless noise tile drifting sideways (transform only). */
-    .beach-clouds { left: 0; top: 0; width: calc(100% + 640px); height: 58%; opacity: .4; transition: opacity .7s ease-in-out;
-        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='320'%3E%3Cfilter id='c' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0047 0.0094' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 2.2 0 0 0 -0.95'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E") 0 0 / 640px 320px repeat;
+    .beach-clouds { left: 0; top: 0; width: calc(100% + 640px); height: 58%; opacity: .3; transition: opacity .7s ease-in-out;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='320'%3E%3Cfilter id='c' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0047 0.0094' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.84 0 0 0 0 0.92 2.2 0 0 0 -0.95'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E") 0 0 / 640px 320px repeat;
         -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent 100%); mask-image: linear-gradient(to bottom, #000 40%, transparent 100%);
         will-change: transform; animation: beach-clouds 80s linear infinite; }
     @keyframes beach-clouds { to { transform: translateX(-640px); } }
@@ -49,9 +49,15 @@ window.toggleTheme = function () {
     .beach-stars i { position: absolute; width: 3px; height: 3px; margin: -1.5px; border-radius: 9999px; background: #fff;
         box-shadow: 0 0 6px 1px rgba(255, 220, 245, .8); opacity: .25; will-change: opacity; animation: beach-twinkle 3.6s ease-in-out infinite alternate; }
     @keyframes beach-twinkle { to { opacity: 1; } }
+    /* Night moon (image centre 68.9%, 23.7%): a soft pink glow that breathes (transform/opacity only). */
+    .beach-moon { left: 68.9%; top: 23.7%; width: 13%; aspect-ratio: 1; margin: -6.5% 0 0 -6.5%; border-radius: 9999px; opacity: 0; transition: opacity .7s ease-in-out;
+        background: radial-gradient(circle, rgba(255, 214, 236, .55) 0%, rgba(249, 168, 212, .28) 22%, rgba(236, 72, 153, .10) 45%, transparent 70%); }
+    .beach-moon::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: inherit;
+        will-change: transform, opacity; animation: beach-moon 5s ease-in-out infinite alternate; }
+    @keyframes beach-moon { from { transform: scale(.92); opacity: .35; } to { transform: scale(1.08); opacity: 1; } }
     html.dark .beach-clouds { opacity: 0; }
-    html.dark .beach-stars { opacity: 1; }
-    html:not(.dark) .beach-stars i, html.dark .beach-clouds, .beach-anim.is-paused * { animation-play-state: paused; }
+    html.dark .beach-stars, html.dark .beach-moon { opacity: 1; }
+    html:not(.dark) .beach-stars i, html:not(.dark) .beach-moon::after, html.dark .beach-clouds, .beach-anim.is-paused *, .beach-anim.is-paused .beach-moon::after { animation-play-state: paused; }
     @media (prefers-reduced-motion: reduce) { .beach-anim { display: none; } }
     .beach-tint { position: fixed; inset: 0; z-index: -9; pointer-events: none;
         background: rgba(255,255,255,.20); transition: background-color .7s ease-in-out; }
