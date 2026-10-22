@@ -86,7 +86,9 @@ class ExportTest extends TestCase
 
         $pdf = $this->actingAs($this->counselorA)->get(route('staff.records.export', [$this->recordA, 'format' => 'pdf']))->assertOk();
         $pdf->assertDownload("HDC_Form5_24-10001_{$today}.pdf");
-        $this->assertStringStartsWith('%PDF', $this->downloaded($pdf));
+        $pdfContents = $this->downloaded($pdf);
+        $this->assertStringStartsWith('%PDF', $pdfContents);
+        $this->assertStringContainsString('/Subtype /Image', $pdfContents, 'HDC logo in the header.');
 
         $xlsx = $this->actingAs($this->counselorA)->get(route('staff.records.export', [$this->recordA, 'format' => 'xlsx']))->assertDownload("HDC_Form5_24-10001_{$today}.xlsx");
         $cells = $this->xlsxCells($xlsx);
@@ -102,6 +104,7 @@ class ExportTest extends TestCase
         $this->assertTrue($zip->open($path) === true);
         $this->assertStringContainsString('Ana Aquino', $zip->getFromName('word/document.xml'));
         $this->assertStringContainsString('CONFIDENTIAL', implode('', array_map(fn ($i) => (string) $zip->getFromIndex($i), range(0, $zip->numFiles - 1))));
+        $this->assertNotEmpty(preg_grep('#^word/media/.+\.png$#', array_map(fn ($i) => $zip->getNameIndex($i), range(0, $zip->numFiles - 1))), 'HDC logo in the header.');
         $zip->close();
         unlink($path);
     }

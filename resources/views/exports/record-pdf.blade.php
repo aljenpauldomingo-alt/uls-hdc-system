@@ -13,6 +13,7 @@
         header .center { font-size: 11.5px; font-weight: bold; }
         header .city { font-size: 10px; }
         header .confidential { margin-top: 4px; font-size: 10px; font-weight: bold; color: #b91c1c; letter-spacing: 2px; }
+        header .logo { position: absolute; left: 0; top: 4px; width: 64px; height: 64px; }
         footer { position: fixed; bottom: -46px; left: 0; right: 0; height: 30px; font-size: 8px; color: #4b5563; border-top: 1px solid #d1d5db; padding-top: 4px; }
         footer .confidential { color: #b91c1c; font-weight: bold; }
         h1 { font-size: 13px; text-align: center; margin: 0 0 8px; }
@@ -32,6 +33,7 @@
 </head>
 <body>
     <header>
+        <img class="logo" src="{{ public_path('images/hdc-logo-print.png') }}" alt="ULS Human Development Center">
         <div class="uni">{{ \App\Support\Exports\RecordDocument::UNIVERSITY }}</div>
         <div class="center">{{ \App\Support\Exports\RecordDocument::CENTER }}</div>
         <div class="city">{{ \App\Support\Exports\RecordDocument::CITY }}</div>

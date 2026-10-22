@@ -362,12 +362,18 @@ final class DocumentWriter
     {
         $section = $word->addSection(['marginTop' => 1700, 'marginBottom' => 1100, 'marginLeft' => 1000, 'marginRight' => 1000]);
 
-        $header = $section->addHeader();
+        // Logo | centred lines | empty cell of the same width, so the text stays centred on the page.
+        $header = $section->addHeader()->addTable(['borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 0, 'width' => 100 * 50, 'unit' => 'pct']);
+        $header->addRow();
+        $header->addCell(1300, ['valign' => 'center'])
+            ->addImage(public_path('images/hdc-logo-print.png'), ['width' => 46, 'height' => 46, 'alignment' => Jc::START]);
+        $lines = $header->addCell(7640, ['valign' => 'center']);
         $center = ['alignment' => Jc::CENTER, 'spaceAfter' => 0];
-        $header->addText(RecordDocument::UNIVERSITY, ['bold' => true, 'size' => 12], $center);
-        $header->addText(RecordDocument::CENTER, ['bold' => true, 'size' => 11], $center);
-        $header->addText(RecordDocument::CITY, ['size' => 10], $center);
-        $header->addText(RecordDocument::CONFIDENTIAL, ['bold' => true, 'color' => 'B91C1C', 'size' => 10], $center);
+        $lines->addText(RecordDocument::UNIVERSITY, ['bold' => true, 'size' => 12], $center);
+        $lines->addText(RecordDocument::CENTER, ['bold' => true, 'size' => 11], $center);
+        $lines->addText(RecordDocument::CITY, ['size' => 10], $center);
+        $lines->addText(RecordDocument::CONFIDENTIAL, ['bold' => true, 'color' => 'B91C1C', 'size' => 10], $center);
+        $header->addCell(1300);
 
         $footer = $section->addFooter();
         $footer->addPreserveText($generatedLine.'    ·    Page {PAGE} of {NUMPAGES}', ['size' => 8, 'color' => '555555'], ['alignment' => Jc::CENTER]);

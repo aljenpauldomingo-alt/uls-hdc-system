@@ -7,6 +7,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
+        @include('partials.favicons')
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -25,11 +26,13 @@
         </div>
 
         <div class="relative z-0 min-h-screen flex flex-col justify-center items-center px-4 pt-16 pb-8 sm:pt-8">
-            <div class="glass-card w-full sm:max-w-md px-6 py-6 sm:px-8">
-                <a href="/" class="flex flex-col items-center gap-2 text-center">
-                    <x-application-logo class="w-16 h-16 fill-current text-gray-700 dark:text-gray-200" />
-                    <span class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">ULS HDC</span>
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Human Development Center') }}</span>
+            <div class="glass-login w-full sm:max-w-md px-6 py-6 sm:px-8">
+                <a href="/" class="flex flex-col items-center gap-3 text-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500">
+                    <x-application-logo class="h-24 w-24" />
+                    <span>
+                        <span class="glass-title block text-2xl font-bold tracking-tight">{{ __('Human Development Center') }}</span>
+                        <span class="mt-1 block text-sm font-medium text-gray-800 dark:text-gray-200">University of La Salette, Inc.</span>
+                    </span>
                 </a>
 
                 <div class="mt-6">
